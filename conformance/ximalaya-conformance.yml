@@ -1,0 +1,182 @@
+generated: '2026-09-04'
+method: searched
+source: >-
+  https://open.ximalaya.com/doc/api and the Open Platform policy section
+  (https://open.ximalaya.com/doc/detailQuickStart?categoryId=18&articleId=35 開発者服務協議,
+  ?articleId=78 開放平台隱私政策, ?articleId=83 技術產品隱私政策總覽), plus live probes 2026-09-04
+note: >-
+  Cross-cutting and domain standards asserted or NOT asserted by Ximalaya's own
+  contract and documentation. Ximalaya publishes no OpenAPI, so nothing here is derived
+  from a spec; each entry cites the documentation location or the probe that settles
+  it. Absence is recorded honestly — this is a reward-only dimension and nothing was
+  invented to fill a slot.
+
+conformance:
+- id: oauth2
+  name: OAuth 2.0 (RFC 6749)
+  conforms: true
+  evidence: https://open.ximalaya.com/doc/detailApi?categoryId=9&articleId=5
+  detail: >-
+    A real OAuth 2.0 authorization server: /oauth2/v2/authorize and
+    /oauth2/v2/access_token, with authorization_code, client_credentials and
+    refresh_token grants, response_type=code, a comma-delimited scope set, and token
+    introspection and revocation endpoints (/oauth2/get_token_info, /oauth2/revoke_token,
+    /oauth2/revoke_refresh_token). Deviates from the spec in transport: the access_token
+    is passed as a request PARAMETER and signed alongside the others, not as an
+    Authorization: Bearer header.
+  deviations:
+  - Token is not presented as a Bearer credential in an Authorization header.
+  - Scopes are comma-delimited rather than space-delimited as RFC 6749 §3.3 specifies.
+  - No authorization-server metadata document (RFC 8414) is served.
+
+- id: oauth2-authorization-server-metadata
+  name: OAuth 2.0 Authorization Server Metadata (RFC 8414)
+  conforms: false
+  evidence: https://api.ximalaya.com/.well-known/oauth-authorization-server
+  detail: Probed 2026-09-04 — HTTP 400 (platform error envelope) on api.ximalaya.com
+    and apihera.ximalaya.com; 404 on every other host. No discovery document is served.
+
+- id: oidc
+  name: OpenID Connect
+  conforms: false
+  evidence: https://api.ximalaya.com/.well-known/openid-configuration
+  detail: >-
+    Probed 2026-09-04 across 7 hosts — no openid-configuration anywhere. Ximalaya's
+    login authorization is plain OAuth 2.0 delegation for data access; no id_token, no
+    UserInfo endpoint and no OIDC claims are documented.
+
+- id: rfc9457
+  name: RFC 9457 Problem Details for HTTP APIs
+  conforms: false
+  evidence: https://open.ximalaya.com/doc/detailApi?categoryId=6&articleId=38
+  detail: >-
+    Errors use a proprietary JSON envelope (error_no, error_code, error_desc, service)
+    with Content-Type application/json;charset=UTF-8, not application/problem+json.
+    The registry is genuinely rich — 38 documented codes across seven numbered series —
+    but it is not the standard shape.
+
+- id: rfc8594
+  name: RFC 8594 Sunset HTTP Header
+  conforms: false
+  evidence: https://open.ximalaya.com/doc/detailApi?categoryId=15&articleId=31
+  detail: >-
+    Deprecations are announced only as prose warnings in the reference (the legacy
+    distribution interface is marked 待廢棄 / pending deprecation with no date). No
+    Sunset or Deprecation header is emitted and no notice period is published.
+
+- id: rfc9116
+  name: RFC 9116 security.txt
+  conforms: false
+  evidence: https://www.ximalaya.com/.well-known/security.txt
+  detail: Probed 2026-09-04 — 404 on all 7 hosts.
+
+- id: idempotency
+  name: Idempotent request handling
+  conforms: false
+  evidence: https://open.ximalaya.com/doc/detailApi?categoryId=6&articleId=38
+  detail: >-
+    No idempotency key of any kind. The platform goes further and REJECTS a replayed
+    identical request as a duplicate (error 225,
+    ximalaya.duplicate invoke with same nonce and timestamp), so retry-safety must be
+    solved entirely on the client. See conventions/ximalaya-conventions.yml.
+
+- id: pagination
+  name: Documented pagination
+  conforms: true
+  evidence: https://open.ximalaya.com/doc/detailApi?categoryId=10&articleId=6
+  detail: >-
+    Consistent page/count pagination across the content and search surfaces, with
+    total_page / total_count / current_page in responses, plus timestamp-cursor
+    incremental endpoints (/incr/albums, /incr/tracks) for bulk sync.
+
+- id: rate-limit-headers
+  name: RateLimit header fields for HTTP (draft / RFC 9239-style signalling)
+  conforms: false
+  evidence: https://open.ximalaya.com/doc/detailApi?categoryId=6&articleId=38
+  detail: >-
+    Quotas are published (5000/min, 280000/hour per application) but no RateLimit-*,
+    X-RateLimit-* or Retry-After header is emitted or documented; exhaustion is only
+    visible as error_no 104 in the body.
+
+- id: webhook-signing
+  name: Signed webhook delivery
+  conforms: true
+  evidence: https://open.ximalaya.com/doc/detailApi?categoryId=6&articleId=69
+  detail: >-
+    The four inbound push callbacks are signed with a documented partner-implemented
+    signature algorithm that the receiver must verify. Not a named industry standard,
+    but a real, documented integrity mechanism rather than an unauthenticated POST.
+
+domain_standards:
+  market: online audio / podcasting / audiobook distribution
+  note: >-
+    Checked for the machine-readable standards this market actually uses. Ximalaya
+    declares NONE of them in its contract. This is recorded as an honest absence, not a
+    penalty — Ximalaya is a closed content-distribution platform whose partners
+    integrate bilaterally, and its market's interchange standards are open-syndication
+    formats it has no commercial reason to speak.
+  checked:
+  - id: rss-podcast
+    name: RSS 2.0 with the iTunes podcast namespace
+    conforms: false
+    detail: >-
+      The universal podcast interchange format. Ximalaya exposes no RSS feed for
+      albums or tracks anywhere in the Open Platform API; the catalog is reachable only
+      through the signed JSON API. This is a deliberate closed-garden posture — an
+      integrator cannot subscribe to a Ximalaya album with a standard podcast client.
+  - id: podcast-namespace
+    name: Podcasting 2.0 namespace (podcast:*)
+    conforms: false
+    detail: Not referenced anywhere in the documentation.
+  - id: opds
+    name: OPDS (Open Publication Distribution System)
+    conforms: false
+    detail: >-
+      Relevant to the audiobook half of Ximalaya's catalog; not implemented and not
+      referenced.
+  - id: schema-org-podcast
+    name: schema.org PodcastEpisode / AudioObject structured data
+    conforms: false
+    detail: >-
+      The Album and Track models are proprietary shapes with no JSON-LD, no @context
+      and no schema.org alignment; nothing in the API emits structured data an agent
+      could interpret without Ximalaya-specific knowledge.
+  - id: dash-hls
+    name: MPEG-DASH / HLS adaptive streaming manifests
+    conforms: false
+    detail: >-
+      Playback is via per-request signed URLs to *.xmcdn.com returned by get_play_info,
+      with an encryption key that can expire (error 702). No standard streaming
+      manifest is published.
+
+compliance_certifications:
+  published: false
+  trust_center: false
+  detail: >-
+    No trust centre, SOC 2, ISO 27001, PCI DSS or equivalent certification is published
+    on any Ximalaya host (probed 2026-09-04). What Ximalaya does publish is a
+    substantial privacy and developer-compliance policy set aimed at Chinese
+    regulation — a developer service agreement, an Open Platform privacy policy, a
+    developer personal-information-protection compliance guide, an app review standard,
+    and a per-product privacy policy overview including one specific to the audio
+    integration data interface. These are policy documents, not third-party audited
+    certifications, so no Compliance pointer is emitted in apis.yml.
+  policy_documents:
+  - name: 開発者服務協議 (Developer Service Agreement)
+    url: https://open.ximalaya.com/doc/detailQuickStart?categoryId=18&articleId=35
+  - name: 開放平台隱私政策 (Open Platform Privacy Policy)
+    url: https://open.ximalaya.com/doc/detailQuickStart?categoryId=18&articleId=78
+  - name: 開発者個人信息保護合規指引 (Developer Personal Information Protection Compliance
+      Guide)
+    url: https://open.ximalaya.com/doc/detailQuickStart?categoryId=18&articleId=82
+  - name: 開放平台技術產品隱私政策總覽 (Technical Product Privacy Policy Overview)
+    url: https://open.ximalaya.com/doc/detailQuickStart?categoryId=18&articleId=83
+  - name: 應用審核規範 (Application Review Standard)
+    url: https://open.ximalaya.com/doc/detailQuickStart?categoryId=18&articleId=39
+
+privacy_relevant_observation: >-
+  The platform REQUIRES partners to report hardware advertising identifiers — OAID
+  first on Android, IDFA first on iOS — on every API call, and makes correct
+  device-identifier reporting a launch-review gate. That is an unusually strong
+  identifier-collection mandate to place on an integrator, and it is why the developer
+  personal-information compliance guide exists alongside the ordinary privacy policy.

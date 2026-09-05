@@ -1,0 +1,968 @@
+generated: '2026-09-04'
+method: searched
+source: https://open.ximalaya.com/doc/detailApi?categoryId=6&articleId=37 (数据模型), read via https://open.ximalaya.com/api-docs/document?id=37
+note: 'Ximalaya publishes no OpenAPI, so this entity graph could not be derived from components.schemas or $ref
+  links. It is transcribed from the provider''s own published 数据模型 (Data Model) reference, which is a genuine, complete
+  object reference: 56 named models with typed field tables and cross-links between models. Relationships below
+  are the model-to-model links the reference itself states via its own anchor hyperlinks; no relationship was inferred
+  from field-name conventions alone.'
+entity_count: 56
+relationship_count: 31
+id_conventions:
+  style: bare numeric ids, no typed prefixes
+  note: 'Ximalaya ids are plain integers (album id, track id, category id, uid) with no vendor prefix, so an id
+    is not self-describing: an agent holding 5203860 cannot tell from the value whether it is an album or a track.
+    The Album model does carry a constant `kind` discriminator field (fixed value "album") which is the only in-band
+    type marker published.'
+  discriminator_field: kind
+core_entities:
+- Album
+- Track
+- Announcer
+- User
+- OrderDetail
+- Radio
+- Program
+- Rank
+- Column
+- Metadata
+domains:
+- name: Content — on-demand
+  entities:
+  - Album
+  - PaidAlbum
+  - SubordinatedAlbum
+  - AlbumUpdateInfo
+  - SubscribeAlbumUpdateInfo
+  - IncrAlbum
+  - Track
+  - PaidTrack
+  - PaidTrackPlayInfo
+  - LastUpTrack
+  - IncrTrack
+  - VideoPlayInfo
+  - AssistedSleepAlbum
+  - AssistedSleepTrack
+- name: Content — broadcast radio
+  entities:
+  - Radio
+  - Program
+  - Live_announcer
+  - LiveCategory
+  - LiveRoom
+  - Channel
+  - Scene
+- name: People
+  entities:
+  - Announcer
+  - AnnouncerInfo
+  - User
+  - Persona
+- name: Taxonomy + editorial
+  entities:
+  - Metadata
+  - MetadataAttribute
+  - Dimension
+  - Column
+  - CustomizedAlbumOrTrackColumn
+  - CustomizedAlbumColumnItem
+  - CustomizedTrackColumnItem
+  - Banner
+  - DeveloperCollectedAlbum
+  - Rank
+  - RankItem
+  - LevelOneRank
+  - LevelTwoRank
+- name: Commerce
+  entities:
+  - OrderDetail
+  - Coupon
+  - UserCoupon
+  - PriceDetail
+  - ContentPackItem
+  - XiBeanProduct
+  - AlbumActivity
+  - Gradient_Activity
+  - PromotionItem
+  - ActivityPage
+  - ActivityModel
+- name: User activity
+  entities:
+  - PlayHistoryDetail
+  - PlayHistoryRecord
+  - PlayHistoryDeleteRecord
+- name: Social
+  entities:
+  - AlbumComment
+  - AlbumCommentReply
+  - TrackComment
+  - TrackCommentReply
+entities:
+- name: Album
+  field_count: 28
+  fields:
+  - id
+  - kind
+  - album_title
+  - tracks_natural_ordered
+  - category_id
+  - album_tags
+  - album_intro
+  - cover_url
+  - cover_url_small
+  - cover_url_middle
+  - cover_url_large
+  - announcer
+  - play_count
+  - favorite_count
+  - share_count
+  - include_track_count
+  - last_uptrack
+  - is_finished
+  - can_download
+  - copyright_source
+  - updated_at
+  - created_at
+  - meta
+  - recommend_reason
+  - short_rich_intro
+  - metadatas
+  - quality_tags
+  - quality_score
+  references:
+  - Announcer
+  - LastUpTrack
+  - Metadata
+- name: PaidAlbum
+  field_count: 58
+  fields:
+  - id
+  - kind
+  - album_title
+  - tracks_natural_ordered
+  - category_id
+  - album_tags
+  - album_intro
+  - cover_url
+  - cover_url_small
+  - cover_url_middle
+  - cover_url_large
+  - announcer
+  - play_count
+  - favorite_count
+  - share_count
+  - include_track_count
+  - last_uptrack
+  - is_finished
+  - can_download
+  - copyright_source>
+  - updated_at
+  - created_at
+  - meta
+  - recommend_reason
+  - short_rich_intro
+  - metadatas >
+  - quality_tags>
+  - quality_score>
+  - style="font-weight:bolder;">以下是付费专辑特有字段：
+  - is_paid
+  - album_score
+  - short_intro
+  - estimated_track_count
+  - free_track_count
+  - free_track_ids
+  - detail_banner_url
+  - target_cloud
+  - outline
+  - album_rich_intro
+  - speaker_intro
+  - sale_intro
+  - expected_revenue
+  - buy_notes
+  - speaker_title
+  - speaker_content
+  - has_sample
+  - composed_price_type
+  - price_type_info
+  - selling_point
+  - is_vipfree
+  - style="font-family:"Chinese Quote", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino
+    Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;">is_vip_exclusive
+  - style="color:rgba(0, 0, 0, 0.65); font-family:"Chinese Quote", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size:13px;">is_
+    style="color:rgba(0, 0, 0, 0.65); font-size:13px;">child_vipfree>
+  - style="font-family:"Chinese Quote", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino
+    Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;">is_child_vipexclusive style="font-family:"Chinese
+    Quote", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+    "Helvetica Neue", Helvetica, Arial, sans-serif;"> style="font-family:"Chinese Quote", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;">>
+  - is_free_listen
+  - free_listen_start
+  - free_listen_end
+  - is_activity
+  - is_gradient_activity
+  references:
+  - AlbumActivity
+  - Announcer
+  - Gradient_Activity
+  - LastUpTrack
+  - Metadata
+  - PriceDetail
+- name: AlbumActivity
+  field_count: 5
+  fields:
+  - activity_type
+  - activity_total
+  - activity_stock
+  - activity_start
+  - activity_end
+- name: Gradient_Activity
+  field_count: 3
+  fields:
+  - activit_gradient_infos
+  - gradient_start
+  - gradient_end>
+- name: PriceDetail
+  field_count: 3
+  fields:
+  - price_type
+  - price
+  - discounted_price
+- name: AlbumUpdateInfo
+  field_count: 6
+  fields:
+  - id
+  - kind
+  - last_up_track_id
+  - last_up_track_title
+  - last_up_track_cover_path
+  - last_up_track_at
+- name: SubordinatedAlbum
+  field_count: 5
+  fields:
+  - id
+  - album_title
+  - cover_url_small
+  - cover_url_middle
+  - cover_url_large
+- name: SubscribeAlbumUpdateInfo
+  field_count: 12
+  fields:
+  - id
+  - kind
+  - album_title
+  - cover_url_small
+  - cover_url_middle
+  - cover_url_large
+  - announcer
+  - last_uptrack
+  - subscribe_count
+  - updated_tracks_count
+  - is_finished
+  - timeline
+  references:
+  - Announcer
+  - LastUpTrack
+- name: Metadata
+  field_count: 3
+  fields:
+  - style="font-family:"Chinese Quote", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino
+    Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;">display_name
+  - kind
+  - attributes
+  references:
+  - MetadataAttribute
+- name: MetadataAttribute
+  field_count: 2
+  fields:
+  - attr_key
+  - attr_value
+- name: IncrAlbum
+  field_count: 40
+  fields:
+  - id
+  - kind
+  - album_title
+  - tracks_natural_ordered
+  - category_id
+  - album_tags
+  - album_intro
+  - cover_url_small
+  - cover_url_middle
+  - cover_url_large
+  - announcer
+  - play_count
+  - favorite_count
+  - share_count
+  - include_track_count
+  - last_uptrack
+  - is_finished
+  - can_download
+  - updated_at
+  - created_at
+  - style="font-weight:bolder;">is_online
+  - style="font-weight:bolder;">offline_reason
+  - style="font-weight:bolder;">以下是付费专辑特有字段：
+  - is_paid
+  - album_score
+  - estimated_track_count
+  - free_track_count
+  - free_track_ids
+  - detail_banner_url
+  - target_cloud
+  - album_rich_intro
+  - speaker_intro
+  - sale_intro
+  - expected_revenue
+  - buy_notes
+  - speaker_title
+  - speaker_content
+  - has_sample
+  - composed_price_type
+  - price_type_detail
+  references:
+  - Announcer
+  - LastUpTrack
+  - PriceDetail
+- name: Track
+  field_count: 31
+  fields:
+  - id
+  - kind
+  - track_title
+  - order_num
+  - position
+  - track_tags
+  - track_intro
+  - track_rich_intro
+  - cover_url_small
+  - cover_url_middle
+  - cover_url_large
+  - announcer
+  - duration
+  - contain_video
+  - play_count
+  - favorite_count
+  - comment_count
+  - vip_first_status
+  - play_size_24_m4a
+  - play_size_64_m4a
+  - play_size_amr
+  - can_download
+  - download_size
+  - subordinated_album
+  - source
+  - updated_at
+  - created_at
+  - style="font-weight:bold;"> 以下字段仅”="https://open.ximalaya.com/doc/detailApi?categoryId=12&articleId=95#%E8%8E%B7%E5%8F%96%E9%A2%91%E9%81%93%E4%B8%8B%E5%A3%B0%E9%9F%B3%E5%88%97%E8%A1%A8"
+    target="_blank">获取频道下声音列表 style="font-weight:bold;">“才会输出
+  - business_type
+  - scene_id
+  - channel_id
+  references:
+  - Announcer
+  - SubordinatedAlbum
+- name: PaidTrack
+  field_count: 35
+  fields:
+  - id
+  - kind
+  - track_title
+  - order_num
+  - position
+  - track_tags
+  - track_intro
+  - track_rich_intro
+  - ext_info
+  - cover_url_small
+  - cover_url_middle
+  - cover_url_large
+  - announcer
+  - duration
+  - contain_video
+  - play_count
+  - favorite_count
+  - comment_count
+  - vip_first_status>
+  - can_download
+  - subordinated_album
+  - source
+  - updated_at
+  - created_at
+  - style="font-weight:bolder;">以下字段是付费声音特有字段：
+  - is_paid
+  - is_free
+  - is_trailer
+  - has_sample
+  - sample_duration
+  - style="font-weight:bolder;">以下字段在该付费声音是整条免费听（is_free为true）时才有：
+  - play_size_24_m4a
+  - play_size_64_m4a
+  - play_size_amr
+  - download_size
+  references:
+  - Announcer
+  - SubordinatedAlbum
+- name: PaidTrackPlayInfo
+  field_count: 13
+  fields:
+  - track_id
+  - play_type
+  - play_duration
+  - play_url_24_aac
+  - play_size_24_aac
+  - play_url_64_aac
+  - play_size_64_aac
+  - play_url_128_aac
+  - play_size_128_aac
+  - play_url_64_mp3
+  - play_size_64_mp3
+  - play_url_32_mp3
+  - play_size_32_mp3
+- name: LastUpTrack
+  field_count: 5
+  fields:
+  - track_id
+  - track_title
+  - duration
+  - updated_at
+  - created_at
+- name: IncrTrack
+  field_count: 32
+  fields:
+  - id
+  - kind
+  - track_title
+  - order_num
+  - track_tags
+  - track_intro
+  - cover_url_small
+  - cover_url_middle
+  - cover_url_large
+  - announcer
+  - duration
+  - play_count
+  - favorite_count
+  - comment_count
+  - can_download
+  - subordinated_album
+  - source
+  - updated_at
+  - created_at
+  - style="font-weight:bolder;">is_online
+  - style="font-weight:bolder;">offline_reason
+  - style="font-weight:bolder;">以下字段是付费声音特有字段：
+  - is_paid
+  - is_free
+  - is_trailer
+  - has_sample
+  - sample_duration
+  - style="font-weight:bolder;">以下字段在该付费声音是整条免费听（is_free为true）时才有：
+  - play_size_24_m4a
+  - play_size_64_m4a
+  - play_size_amr
+  - download_size
+  references:
+  - Announcer
+  - SubordinatedAlbum
+- name: Announcer
+  field_count: 6
+  fields:
+  - id
+  - nickname
+  - avatar_url
+  - is_verified
+  - 以下字段仅”="https://open.ximalaya.com/doc/detailApi?categoryId=10&articleId=6#%E6%89%B9%E9%87%8F%E8%8E%B7%E5%8F%96%E4%B8%93%E8%BE%91%E4%BF%A1%E6%81%AF"
+    target="_blank">批量获取专辑信息“才会输出
+  - verify_type
+- name: Persona
+  field_count: 10
+  fields:
+  - id
+  - kind
+  - sex
+  - birth_year
+  - birth_month
+  - birth_day
+  - interested_album_ids
+  - interested_category_ids
+  - login_historys
+  - last_play_at
+- name: Rank
+  field_count: 15
+  fields:
+  - rank_key
+  - kind
+  - rank_title
+  - rank_type
+  - rank_sub_title
+  - rank_period
+  - rank_period_type
+  - rank_item_num
+  - rank_order_num
+  - cover_url
+  - category_id
+  - rank_content_type
+  - rank_first_item_id
+  - rank_first_item_title
+  - index_rank_items
+  references:
+  - RankItem
+- name: RankItem
+  field_count: 3
+  fields:
+  - content_type
+  - id
+  - title
+- name: PlayHistoryDetail
+  field_count: 22
+  fields:
+  - kind
+  - content_type
+  - album_id
+  - album_title
+  - album_cover_url_small
+  - album_cover_url_middle
+  - album_cover_url_large
+  - track_id
+  - track_title
+  - track_cover_url_small
+  - track_cover_url_middle
+  - track_cover_url_large
+  - track_duration
+  - radio_id
+  - radio_name
+  - radio_cover_url_small
+  - radio_cover_url_large
+  - schedule_id
+  - program_name
+  - break_second
+  - play_begin_at
+  - play_end_at
+- name: PlayHistoryRecord
+  field_count: 8
+  fields:
+  - content_type
+  - album_id
+  - track_id
+  - radio_id
+  - schedule_id
+  - break_second
+  - play_begin_at
+  - play_end_at
+- name: PlayHistoryDeleteRecord
+  field_count: 6
+  fields:
+  - content_type
+  - album_id
+  - track_id
+  - radio_id
+  - schedule_id
+  - deleted_at
+- name: CustomizedAlbumOrTrackColumn
+  field_count: 14
+  fields:
+  - id
+  - kind
+  - order_num
+  - column_title
+  - column_intro
+  - column_content_count
+  - cover_url_original
+  - cover_url_small
+  - cover_url_middle
+  - cover_url_large
+  - channel_play_count
+  - dimensions
+  - updated_at
+  - created_at
+  references:
+  - Dimension
+- name: Dimension
+  field_count: 3
+  fields:
+  - dim_id
+  - dim_name
+  - dim_val
+- name: CustomizedAlbumColumnItem
+  field_count: 20
+  fields:
+  - kind
+  - content_type
+  - id
+  - order_num
+  - title
+  - category_id
+  - intro
+  - cover_url_original
+  - cover_url_small
+  - cover_url_middle
+  - cover_url_large
+  - play_count
+  - channel_play_count
+  - include_track_count
+  - is_finished
+  - is_paid
+  - dimensions
+  - updated_at
+  - created_at
+  - publish_at
+  references:
+  - Dimension
+- name: CustomizedTrackColumnItem
+  field_count: 30
+  fields:
+  - kind
+  - content_type
+  - id
+  - order_num
+  - title
+  - category_id
+  - subordinated_album
+  - duration
+  - intro
+  - short_ext_info
+  - cover_url_original
+  - cover_url_small
+  - cover_url_middle
+  - cover_url_large
+  - play_count
+  - channel_play_count
+  - play_url_24_m4a
+  - play_size_24_m4a
+  - play_url_64_m4a
+  - play_size_64_m4a
+  - play_url_amr
+  - play_size_amr
+  - can_download
+  - download_url
+  - download_size
+  - is_finished
+  - dimensions
+  - updated_at
+  - created_at
+  - publish_at
+  references:
+  - Dimension
+  - SubordinatedAlbum
+- name: OrderDetail
+  field_count: 10
+  fields:
+  - xima_order_no
+  - xima_order_status
+  - xima_order_created_at
+  - xima_order_updated_at
+  - uid
+  - third_uid
+  - order_amount
+  - client_os_type
+  - pay_content
+  - pay_channel
+- name: Coupon
+  field_count: 14
+  fields:
+  - coupon_id
+  - coupon_name
+  - coupon_type
+  - status
+  - orient_album_ids
+  - discount_type
+  - discount_value
+  - broadcaster_rate
+  - valid_type
+  - valid_days
+  - valid_start_time
+  - valid_end_time
+  - used_amount
+  - min_threshold_value
+- name: ContentPackItem
+  field_count: 7
+  fields:
+  - content_pack_item_id
+  - content_pack_title
+  - price
+  - included_album_count
+  - cover_url
+  - created_at
+  - updated_at
+- name: VideoPlayInfo
+  field_count: 14
+  fields:
+  - track_id
+  - play_type
+  - play_duration
+  - video_cover
+  - video_url_hd_mp4
+  - video_size_hd_mp4
+  - video_url_sd_mp4
+  - video_size_sd_mp4
+  - video_url_merge_m3u8
+  - video_size_merge_m3u8
+  - video_url_hd_m3u8
+  - video_size_hd_m3u8
+  - video_url_sd_m3u8
+  - video_size_sd_m3u8
+- name: User
+  field_count: 7
+  fields:
+  - id
+  - kind
+  - nickname
+  - avatar_url
+  - is_verified
+  - is_vip
+  - vip_expire_at
+- name: Column
+  field_count: 0
+  fields: []
+- name: DeveloperCollectedAlbum
+  field_count: 0
+  fields: []
+  references:
+  - Announcer
+  - PriceDetail
+- name: Banner
+  field_count: 0
+  fields: []
+- name: UserCoupon
+  field_count: 11
+  fields:
+  - user_id
+  - coupon_id
+  - status_id
+  - allocation_time
+  - last_update_time
+  - start_time
+  - end_time
+  - coupon_name
+  - description
+  - discount_type
+  - discount_rate
+- name: AssistedSleepAlbum
+  field_count: 0
+  fields: []
+- name: AssistedSleepTrack
+  field_count: 0
+  fields: []
+- name: AlbumComment
+  field_count: 0
+  fields: []
+- name: AlbumCommentReply
+  field_count: 0
+  fields: []
+- name: TrackComment
+  field_count: 0
+  fields: []
+- name: TrackCommentReply
+  field_count: 0
+  fields: []
+- name: ActivityPage
+  field_count: 5
+  fields:
+  - records
+  - page_no
+  - page_size
+  - total_num
+  - total_page
+  references:
+  - ActivityModel
+- name: ActivityModel
+  field_count: 13
+  fields:
+  - id
+  - app_key
+  - app_name
+  - activity_title
+  - activity_intro
+  - activity_content
+  - activity_status
+  - activity_type
+  - activity_total
+  - activity_stock >
+  - discount_rate
+  - start_at
+  - end_at
+- name: PromotionItem
+  field_count: 0
+  fields: []
+- name: LevelOneRank
+  field_count: 0
+  fields: []
+  references:
+  - LevelTwoRank
+- name: LevelTwoRank
+  field_count: 0
+  fields: []
+- name: Scene
+  field_count: 0
+  fields: []
+- name: Channel
+  field_count: 0
+  fields: []
+- name: Radio
+  field_count: 0
+  fields: []
+- name: Program
+  field_count: 0
+  fields: []
+- name: Live_announcer
+  field_count: 0
+  fields: []
+- name: LiveCategory
+  field_count: 0
+  fields: []
+- name: LiveRoom
+  field_count: 0
+  fields: []
+  references:
+  - AnnouncerInfo
+- name: AnnouncerInfo
+  field_count: 0
+  fields: []
+- name: XiBeanProduct
+  field_count: 0
+  fields: []
+relationships:
+- from: Album
+  to: Announcer
+  kind: has_one_or_many
+  via: documented JSON Object/Array field linking to the Announcer model
+- from: Album
+  to: LastUpTrack
+  kind: has_one_or_many
+  via: documented JSON Object/Array field linking to the LastUpTrack model
+- from: Album
+  to: Metadata
+  kind: has_one_or_many
+  via: documented JSON Object/Array field linking to the Metadata model
+- from: PaidAlbum
+  to: AlbumActivity
+  kind: has_one_or_many
+  via: documented JSON Object/Array field linking to the AlbumActivity model
+- from: PaidAlbum
+  to: Announcer
+  kind: has_one_or_many
+  via: documented JSON Object/Array field linking to the Announcer model
+- from: PaidAlbum
+  to: Gradient_Activity
+  kind: has_one_or_many
+  via: documented JSON Object/Array field linking to the Gradient_Activity model
+- from: PaidAlbum
+  to: LastUpTrack
+  kind: has_one_or_many
+  via: documented JSON Object/Array field linking to the LastUpTrack model
+- from: PaidAlbum
+  to: Metadata
+  kind: has_one_or_many
+  via: documented JSON Object/Array field linking to the Metadata model
+- from: PaidAlbum
+  to: PriceDetail
+  kind: has_one_or_many
+  via: documented JSON Object/Array field linking to the PriceDetail model
+- from: SubscribeAlbumUpdateInfo
+  to: Announcer
+  kind: has_one_or_many
+  via: documented JSON Object/Array field linking to the Announcer model
+- from: SubscribeAlbumUpdateInfo
+  to: LastUpTrack
+  kind: has_one_or_many
+  via: documented JSON Object/Array field linking to the LastUpTrack model
+- from: Metadata
+  to: MetadataAttribute
+  kind: has_one_or_many
+  via: documented JSON Object/Array field linking to the MetadataAttribute model
+- from: IncrAlbum
+  to: Announcer
+  kind: has_one_or_many
+  via: documented JSON Object/Array field linking to the Announcer model
+- from: IncrAlbum
+  to: LastUpTrack
+  kind: has_one_or_many
+  via: documented JSON Object/Array field linking to the LastUpTrack model
+- from: IncrAlbum
+  to: PriceDetail
+  kind: has_one_or_many
+  via: documented JSON Object/Array field linking to the PriceDetail model
+- from: Track
+  to: Announcer
+  kind: has_one_or_many
+  via: documented JSON Object/Array field linking to the Announcer model
+- from: Track
+  to: SubordinatedAlbum
+  kind: has_one_or_many
+  via: documented JSON Object/Array field linking to the SubordinatedAlbum model
+- from: PaidTrack
+  to: Announcer
+  kind: has_one_or_many
+  via: documented JSON Object/Array field linking to the Announcer model
+- from: PaidTrack
+  to: SubordinatedAlbum
+  kind: has_one_or_many
+  via: documented JSON Object/Array field linking to the SubordinatedAlbum model
+- from: IncrTrack
+  to: Announcer
+  kind: has_one_or_many
+  via: documented JSON Object/Array field linking to the Announcer model
+- from: IncrTrack
+  to: SubordinatedAlbum
+  kind: has_one_or_many
+  via: documented JSON Object/Array field linking to the SubordinatedAlbum model
+- from: Rank
+  to: RankItem
+  kind: has_one_or_many
+  via: documented JSON Object/Array field linking to the RankItem model
+- from: CustomizedAlbumOrTrackColumn
+  to: Dimension
+  kind: has_one_or_many
+  via: documented JSON Object/Array field linking to the Dimension model
+- from: CustomizedAlbumColumnItem
+  to: Dimension
+  kind: has_one_or_many
+  via: documented JSON Object/Array field linking to the Dimension model
+- from: CustomizedTrackColumnItem
+  to: Dimension
+  kind: has_one_or_many
+  via: documented JSON Object/Array field linking to the Dimension model
+- from: CustomizedTrackColumnItem
+  to: SubordinatedAlbum
+  kind: has_one_or_many
+  via: documented JSON Object/Array field linking to the SubordinatedAlbum model
+- from: DeveloperCollectedAlbum
+  to: Announcer
+  kind: has_one_or_many
+  via: documented JSON Object/Array field linking to the Announcer model
+- from: DeveloperCollectedAlbum
+  to: PriceDetail
+  kind: has_one_or_many
+  via: documented JSON Object/Array field linking to the PriceDetail model
+- from: ActivityPage
+  to: ActivityModel
+  kind: has_one_or_many
+  via: documented JSON Object/Array field linking to the ActivityModel model
+- from: LevelOneRank
+  to: LevelTwoRank
+  kind: has_one_or_many
+  via: documented JSON Object/Array field linking to the LevelTwoRank model
+- from: LiveRoom
+  to: AnnouncerInfo
+  kind: has_one_or_many
+  via: documented JSON Object/Array field linking to the AnnouncerInfo model
+deprecated_fields:
+- model: PaidAlbum
+  field: is_free_listen
+  status: no longer maintained
+  replacement: is_activity
+- model: PaidAlbum
+  field: free_listen_start
+  status: no longer maintained
+  replacement: AlbumActivity.activity_start
+- model: PaidAlbum
+  field: free_listen_end
+  status: no longer maintained
+  replacement: AlbumActivity.activity_end
+gaps:
+- No machine-readable schema (no JSON Schema, no OpenAPI components) is published for any of these 56 models.
+- Field types are documented in prose type names (Int, Long, String, Bool, JSON Object, JSON Array) rather than
+  a formal type system; nullability and enums are described only in free text.
+- Cardinality is not formally stated; has_one vs has_many is expressed only by whether a field is documented as
+  a JSON Object or JSON Array.

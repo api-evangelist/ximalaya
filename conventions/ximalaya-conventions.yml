@@ -1,0 +1,214 @@
+generated: '2026-09-04'
+method: searched
+source: >-
+  https://open.ximalaya.com/doc/detailApi?categoryId=7&articleId=70 (API接入指南),
+  ?categoryId=6&articleId=67 (参数组成), ?categoryId=6&articleId=69 (签名算法),
+  ?categoryId=6&articleId=38 (错误码), ?categoryId=15&articleId=31 (订单API),
+  ?categoryId=10&articleId=6 (免费点播内容API)
+note: >-
+  Cross-cutting runtime semantics for the Ximalaya Open Platform, read from the
+  provider's own documentation. No OpenAPI is published, so nothing here is derived
+  from a spec.
+
+auth:
+  style: signed request (app_key + sig) with OAuth 2.0 access_token for user-private data
+  transport: request parameters, not headers
+  detail: authentication/ximalaya-authentication.yml
+
+transport:
+  protocol: HTTPS only
+  methods: [GET, POST]
+  get_parameters: URL query string
+  post_content_type: application/x-www-form-urlencoded; charset=UTF-8
+  response_content_type: application/json;charset=UTF-8 (fixed)
+  encoding: UTF-8
+  note: >-
+    Response bodies are always JSON with a fixed Content-Type. There is no content
+    negotiation, no XML, and no alternate representation.
+
+hosts:
+  primary_content: https://api.ximalaya.com
+  failover_content: https://apihera.ximalaya.com
+  primary_payment: https://mpay.ximalaya.com
+  failover_payment: https://mpayhera.ximalaya.com
+  failover_note: >-
+    Ximalaya publishes an explicit secondary data-centre for API partners: when the
+    primary host is unavailable the partner may switch to the *hera* host. This is a
+    documented, partner-driven failover — there is no automatic DNS failover and SDK
+    integrations were told to await an SDK release that handles the switch.
+  media_egress_allowlist:
+  - '*.xmcdn.com'
+  media_hosts_note: >-
+    Content bytes are served from separate CDN hosts (imgopen.xmcdn.com for artwork;
+    audio.xmcdn.com / audio.ali.xmcdn.com / aod.tx.xmcdn.com for free audio;
+    audiopay.*.xmcdn.com for paid audio; vod.*.xmcdn.com for video;
+    download.*.xmcdn.com for download; audiofreepay.ali.xmcdn.com for preview). The
+    docs recommend allowlisting the wildcard *.xmcdn.com.
+
+pagination:
+  style: page-number
+  params:
+  - name: page
+    description: 1-based page index.
+  - name: count
+    description: Page size. Documented examples use 5, 20, 30, 40 and 200 depending on
+      the endpoint; per-endpoint maxima are stated on each endpoint's own page.
+  response_fields:
+  - total_page
+  - total_count
+  - current_page
+  note: >-
+    Pagination is page/count across the content and search surfaces. Incremental sync
+    endpoints (/incr/albums, /incr/tracks) use a timestamp cursor instead of page
+    numbers, which is the intended path for bulk catalog synchronisation.
+  cursor_endpoints:
+  - /incr/albums
+  - /incr/tracks
+
+versioning:
+  scheme: mixed
+  parameter: server_api_version
+  current: 1.0.0
+  path_versioning: >-
+    A /v2/ path prefix appears on a subset of endpoints (/v2/albums/list,
+    /v2/search/albums, /v2/search/tracks, /v2/metadata/albums, /v2/tags/list,
+    /v2/subscribe/*, /v2/distribute, /v2/open_pay/get_bought_albums,
+    /open_pay/v2/prepare_order, /open_pay/v3/get_order_detail) alongside unversioned
+    siblings. Both generations remain documented; the docs do not mark the older
+    sibling deprecated.
+  missing_version_error:
+    error_no: 108
+    error_code: ximalaya.common.server_api_version_required
+
+error_envelope:
+  shape: proprietary JSON
+  fields: [error_no, error_code, error_desc, service]
+  rfc9457: false
+  detail: errors/ximalaya-error-codes.yml
+
+rate_limit_signalling:
+  headers: none
+  detail: rate-limits/ximalaya-rate-limits.yml
+  note: Exhaustion is only visible as error_no 104 in the body; no headers, no Retry-After.
+
+request_id_tracing:
+  supported: false
+  note: >-
+    No request-id or correlation-id header or field is documented on requests or
+    responses. The error envelope's optional `service` field names which backend
+    service failed, which is the only tracing affordance published. A partner cannot
+    quote a request id to support.
+
+idempotency:
+  coverage: none
+  mechanism: null
+  header: null
+  scope: []
+  note: >-
+    Ximalaya publishes NO idempotency mechanism, and its replay handling actively works
+    against safe retry. Every request carries a `nonce` and a `timestamp` that must be
+    regenerated per call; re-sending an identical signed request is REJECTED as a
+    duplicate (error 225, "ximalaya.duplicate invoke with same nonce and timestamp",
+    and error 301 on the server-side authentication path). Timestamps must be within
+    one hour of server time, and within five minutes for the distribution APIs. The
+    practical consequence for an agent: a write that times out cannot be safely
+    replayed — the same bytes will be refused, and a re-signed retry is a genuinely
+    new request with no server-side deduplication key. Order creation
+    (/open_pay/v2/prepare_order) does carry a partner-supplied order identifier, which
+    is the closest thing to a dedupe key on the platform, but the docs do not state
+    that resubmitting the same identifier is safe or returns the original order, so it
+    is not claimed as idempotency here.
+  anti_replay:
+    mechanism: nonce + timestamp
+    behavior: reject-duplicate
+    errors: [225, 301]
+
+reversibility:
+  grade: none
+  na: false
+  write_surface_present: true
+  note: >-
+    Ximalaya has a real write surface (order preparation, subscription add/delete,
+    play-history upload/delete, content distribution) but publishes no partner-callable
+    reversal operation for the consequential ones, and states no reversal window
+    anywhere. Refund EXISTS as a platform-side order state, not as an API a partner can
+    invoke.
+  surfaces:
+  - operation: /open_pay/v2/prepare_order
+    action: create a paid-content order
+    reversal_operation: null
+    window: null
+    detail: >-
+      Order states include 3 (cancelled order), 4 (order refunded) and 5 (order
+      failed), and refunds are pushed to the partner over the order_status_notify
+      callback — so a partner can OBSERVE a reversal. There is no documented endpoint
+      for a partner to REQUEST a refund or cancellation, and no window is stated. The
+      test-account documentation says refunds are generally not supported and that a
+      partner needing a test refund must arrange it with a Ximalaya business contact
+      in advance.
+  - operation: /subscribe/add_or_delete
+    action: subscribe or unsubscribe an album for a user
+    reversal_operation: /subscribe/add_or_delete
+    window: unbounded
+    detail: >-
+      Genuinely reversible — the same endpoint toggles both directions, with no stated
+      time limit. This is the one write surface with a real, callable undo.
+  - operation: /play_history/batch_upload
+    action: upload cloud play-history entries
+    reversal_operation: /play_history/batch_delete
+    window: null
+    detail: >-
+      A delete counterpart exists, so history writes can be removed, but no retention
+      or restore window is published and deletion is not documented as recoverable.
+  - operation: /omp-payment-open-api/v2/distribute
+    action: distribute a paid product to a partner catalog
+    reversal_operation: null
+    window: null
+    detail: No documented un-distribute or withdraw operation.
+
+dry_run_mode:
+  supported: false
+  note: >-
+    No dry-run, preview or validate-only mode is documented on any endpoint. The
+    nearest affordance is the sandbox test-account set (see sandbox/) plus
+    /open_pay/get_price_info, which lets a partner read a price before creating an
+    order — a rehearsal of the read half only.
+
+expansion_and_sparse_fields:
+  supported: false
+  note: >-
+    No field-expansion or sparse-fieldset parameter is documented. Response shape is
+    fixed per endpoint; several endpoints instead offer a batch sibling
+    (albums/get_batch, tracks/get_batch, batch_get_paid_albums, batch_get_play_info)
+    to reduce round trips.
+
+metadata:
+  custom_metadata_supported: false
+  note: >-
+    Partners cannot attach arbitrary metadata to Ximalaya objects. A `metadata` /
+    `metadatas` field exists on the Album model but it is Ximalaya's own editorial
+    dimension data (see the Metadata and MetadataAttribute models), read-only to the
+    partner.
+
+mandatory_partner_obligations:
+  note: >-
+    Unusually, Ximalaya makes three OUTBOUND calls a precondition of launch rather than
+    an option. API-only partners must implement play, browse and impression analytics
+    callbacks and demonstrate them working before the app passes launch review. SDK
+    partners get play reporting for free but must still call browse and impression
+    manually. Device identifiers must be reported to spec (OAID first on Android, IDFA
+    first on iOS) and client_os_type must reflect the true caller.
+  operations:
+  - /openapi/.../play data callback
+  - /openapi/.../album browse callback
+  - /openapi/.../album impression callback
+  docs: https://open.ximalaya.com/doc/detailApi?categoryId=7&articleId=107
+
+cross_links:
+  authentication: authentication/ximalaya-authentication.yml
+  scopes: scopes/ximalaya-scopes.yml
+  errors: errors/ximalaya-error-codes.yml
+  rate_limits: rate-limits/ximalaya-rate-limits.yml
+  lifecycle: lifecycle/ximalaya-lifecycle.yml
+  webhooks: asyncapi/ximalaya-callbacks-webhooks.yml
+  data_model: data-model/ximalaya-data-model.yml

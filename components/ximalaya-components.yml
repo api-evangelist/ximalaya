@@ -1,0 +1,92 @@
+generated: '2026-09-04'
+method: searched
+source: >-
+  https://open.ximalaya.com/doc/detailApi?categoryId=7&articleId=73 (JS SDK接入指南),
+  https://open.ximalaya.com/doc/detailApi?categoryId=7&articleId=104 (H5子站接入指南),
+  https://open.ximalaya.com/doc/detailApi?categoryId=7&articleId=103 (小程序接入指南),
+  https://openact.ximalaya.com/web-jssdk/doc/
+note: >-
+  Client-side and embeddable surfaces Ximalaya publishes, distinct from the server
+  SDKs in packages/. These matter more than usual on this platform because the audio
+  player is where Ximalaya's DRM and its mandatory play-analytics reporting live — a
+  partner using the hosted player inherits both, and a partner calling the raw API does
+  not and must implement reporting itself.
+
+component_count: 4
+
+families:
+- name: Web JS SDK
+  loader: '@xmly-fem/web-jssdk'
+  loader_registry: npm
+  cdn: true
+  cdn_note: >-
+    A script-tag CDN distribution is offered alongside npm; the docs point to a "view
+    all available CDN links" page and instruct partners to use the latest version. The
+    published CDN links are not version-pinned in the guide itself, so a consumer
+    loading by script tag cannot tell from the guide which build they will get.
+  global: window.xmsdk
+  docs: https://openact.ximalaya.com/web-jssdk/doc/
+  components:
+  - name: config
+    kind: initializer
+    description: >-
+      Single global initializer for the JS SDK. Takes the app_key and one of two
+      mutually exclusive auth strategies — get_access_token (a JS function, for
+      standard or third-party login authorization) or sig_url (a string URL to a
+      partner-hosted signing endpoint, for no-login authorization). If both are set
+      sig_url wins and get_access_token is ignored. Must run before any XMLY or
+      XMplayer instance is created.
+  - name: XMLY
+    kind: data client
+    description: Browser-side client for the content APIs (free on-demand content,
+      search, categories), wrapping the signature flow so the app_secret never reaches
+      the browser.
+  - name: XMplayer
+    kind: embedded audio player
+    description: >-
+      Prebuilt audio player component. The SDK player integrates play-data reporting
+      automatically, so SDK partners are exempt from implementing the play callback by
+      hand — but the docs are explicit that browse and impression reporting still have
+      to be called manually.
+    docs: https://openact.ximalaya.com/web-jssdk/doc/#/content/player/index
+
+- name: H5 sub-site (H5子站)
+  kind: hosted embedded surface
+  description: >-
+    A Ximalaya-hosted H5 property a partner embeds into its own app or site, rather
+    than building a UI against the API. The heaviest-weight integration option and the
+    lowest-effort one: Ximalaya owns the interface, the playback and the reporting.
+  docs: https://open.ximalaya.com/doc/detailApi?categoryId=7&articleId=104
+
+- name: WeChat mini-program plugin
+  kind: platform plugin
+  appid: wxc6a13dda5815c529
+  description: >-
+    Official Ximalaya plugin for WeChat mini-programs, giving a mini-program an
+    embedded Ximalaya audio surface. Exposes generic methods for invoking the
+    impression and browse analytics callbacks.
+  docs: https://mp.weixin.qq.com/wxopen/plugindevdoc?appid=wxc6a13dda5815c529
+  integration_guide: https://open.ximalaya.com/doc/detailApi?categoryId=7&articleId=103
+
+- name: Server-side API debugging console
+  kind: hosted developer tool
+  description: >-
+    Ximalaya hosts an interactive server-side API debugging tool that computes the
+    signature and issues live calls, which is the practical substitute for the absent
+    OpenAPI/Postman collection on this platform.
+  url: https://open.ximalaya.com/doc/tool
+
+playback_constraints:
+  note: >-
+    Playback URLs are issued per request and are not durable. Paid audio is served from
+    separate authenticated CDN hosts (audiopay.*.xmcdn.com) via get_play_info /
+    batch_get_play_info, and error 702 ("secret for encryption is not exists or
+    expired") is published for an expired decryption key. Album metadata carries a
+    can_download flag whose documented meaning is that content may be cached to the
+    user's device but must NOT be cached server-side.
+
+gaps:
+- No design system, UI kit, or themeable component library is published.
+- No React/Vue/Angular wrapper for the player.
+- The CDN distribution is not documented with pinned version URLs in the integration
+  guide.

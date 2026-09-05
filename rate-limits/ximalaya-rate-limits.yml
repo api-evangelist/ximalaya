@@ -1,0 +1,76 @@
+generated: '2026-09-04'
+method: searched
+source: https://open.ximalaya.com/doc/detailApi?categoryId=6&articleId=38 (错误码 — error
+  104 and 110 carry the published quota figures)
+docs: https://open.ximalaya.com/doc/detailApi?categoryId=6&articleId=38
+note: >-
+  Ximalaya does not publish a dedicated rate-limit page. The quotas below are stated
+  inside the error-code reference, on the entries for error 104
+  (ximalaya.common.request_out_of_limit) and error 110
+  (ximalaya.common.risk_of_brush_limit), and are quoted from there.
+
+limit_count: 3
+
+limits:
+- id: app-per-minute
+  scope: per-application (app_key)
+  window: 1 minute
+  limit: 5000
+  unit: requests
+  applies_to: all Open Platform endpoints combined
+  exhaustion:
+    error_no: 104
+    error_code: ximalaya.common.request_out_of_limit
+  source_quote: 目前调用频率限制为单应用一分钟5000次（所有接口都包含在里面）
+
+- id: app-per-hour
+  scope: per-application (app_key)
+  window: 1 hour
+  limit: 280000
+  unit: requests
+  applies_to: all Open Platform endpoints combined
+  exhaustion:
+    error_no: 104
+    error_code: ximalaya.common.request_out_of_limit
+  source_quote: 一小时280000次（所有接口都包含在里面）
+
+- id: end-user-risk-control
+  scope: per end-user (Ximalaya UID)
+  window: 1 day
+  limit: null
+  unit: composite
+  condition: >-
+    Risk control triggers when a single Ximalaya UID both listens to more than 20
+    albums in one day AND makes more than 8000 track requests.
+  applies_to: track/audio requests attributed to one listening account
+  exhaustion:
+    error_no: 110
+    error_code: ximalaya.common.risk_of_brush_limit
+  note: >-
+    This is an anti-abuse ("brushing"/fraud) control rather than a capacity quota. It
+    is enforced on the listener identity, not the application key, so a well-behaved
+    integration can still trip it on a shared or synthetic account.
+
+response_headers:
+  published: false
+  observed: []
+  note: >-
+    Ximalaya publishes NO rate-limit response headers — there is no X-RateLimit-*,
+    RateLimit-* or Retry-After documented anywhere in the Open Platform reference, and
+    none were observed on live unauthenticated responses from api.ximalaya.com
+    (probed 2026-09-04). Exhaustion is signalled only in the JSON body, as error_no
+    104 inside an HTTP 200/400 envelope. An agent therefore cannot read remaining
+    quota or a retry delay from the runtime response; it can only detect exhaustion
+    after the fact by parsing error_no, and must choose its own backoff.
+
+status_code_on_exhaustion:
+  documented: false
+  note: >-
+    The published registry states the error_no but not the paired HTTP status. Errors
+    are carried in the JSON envelope rather than expressed through HTTP status codes.
+
+gaps:
+- No runtime rate-limit headers of any kind.
+- No documented Retry-After or backoff guidance.
+- No per-endpoint or per-plan quota table; the 5000/min and 280000/hour figures are
+  stated as applying to all endpoints combined for every application.

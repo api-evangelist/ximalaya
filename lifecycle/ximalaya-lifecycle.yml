@@ -1,0 +1,120 @@
+generated: '2026-09-04'
+method: searched
+source: >-
+  https://open.ximalaya.com/doc/detailApi?categoryId=15&articleId=31 (订单API),
+  https://open.ximalaya.com/doc/detailApi?categoryId=6&articleId=37 (数据模型),
+  https://open.ximalaya.com/doc/detailApi?categoryId=6&articleId=67 (参数组成),
+  plus per-document updatedTime values from the portal documentation backend
+  https://open.ximalaya.com/api-docs/document?id=<id>
+note: >-
+  Ximalaya publishes no OpenAPI, so deprecated operations could not be derived from a
+  spec. The deprecations recorded below are inline notices in the provider's own
+  reference text.
+
+versioning:
+  parameter: server_api_version
+  current: 1.0.0
+  path_versioning: true
+  path_generations_observed: [v1 (unprefixed), v2, v3]
+  policy_published: false
+  note: >-
+    No written versioning policy exists. Version generations are visible only as path
+    prefixes (/v2/, /v3/) sitting alongside unprefixed siblings, and as a single flat
+    server_api_version parameter that has stayed at 1.0.0.
+
+deprecation:
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  advance_notice_period: null
+  note: >-
+    Ximalaya has NO published deprecation policy, no notice period, and emits no
+    RFC 8594 Sunset or Deprecation headers. Deprecations are communicated only as
+    prose warnings inside the reference page for the affected operation or field, with
+    no date attached. A partner cannot detect a pending retirement programmatically —
+    only by re-reading the docs.
+  deprecated_items:
+  - kind: operation-group
+    name: 分销接口 (legacy distribution interface)
+    status: 待废弃 (pending deprecation)
+    replacement: 新分销接口 (new distribution interface)
+    replacement_docs: https://open.ximalaya.com/doc/detailApi?categoryId=15&articleId=31
+    sunset_date: null
+    quote: 该接口待废弃，新合作方接入请对接新分销接口
+    note: New partners are directed to the replacement; existing partners are given no
+      migration deadline.
+  - kind: field
+    model: PaidAlbum
+    name: is_free_listen
+    status: 不再维护 (no longer maintained)
+    replacement: is_activity
+    sunset_date: null
+  - kind: field
+    model: PaidAlbum
+    name: free_listen_start
+    status: 不再维护 (no longer maintained)
+    replacement: AlbumActivity.activity_start
+    sunset_date: null
+  - kind: field
+    model: PaidAlbum
+    name: free_listen_end
+    status: 不再维护 (no longer maintained)
+    replacement: AlbumActivity.activity_end
+    sunset_date: null
+
+status_page:
+  exists: false
+  probed:
+  - url: https://status.ximalaya.com
+    result: connection timed out (no host serving a status page)
+    checked: '2026-09-04'
+  note: >-
+    No public status page, uptime history or incident feed was found on any Ximalaya
+    host. What Ximalaya publishes instead is a documented manual failover: partners are
+    told to switch to apihera.ximalaya.com / mpayhera.ximalaya.com when the primary
+    data centre is unavailable. That places incident detection entirely on the partner
+    — there is no signal to watch, only a fallback host to try.
+
+sla:
+  published: false
+  note: No uptime commitment, latency target or support-response SLA is published on
+    the Open Platform. Terms are set in the bilateral partner agreement.
+
+support:
+  channels:
+  - type: business contact (商务对接人)
+    note: Primary channel for access, test accounts, refunds and quota questions.
+  - type: developer community group (技术沟通群)
+    note: The platform overview advertises a real-time online technical support group
+      for onboarded developers.
+  public_ticketing: false
+
+change_signals:
+  changelog_published: false
+  note: >-
+    Ximalaya publishes no dated changelog or release-notes feed. The only machine-
+    readable recency signal is the per-document updatedTime carried by the portal's
+    own documentation backend, which shows the reference is actively maintained.
+  documentation_freshness:
+    most_recently_updated:
+    - document: 订单API (Order API)
+      updated: '2026-04-20'
+    - document: 错误码 (Error codes)
+      updated: '2026-03-29'
+    - document: 内容搜索API (Content search API)
+      updated: '2024-11-19'
+    oldest_updated:
+    - document: 设备ID生成算法 (Device ID algorithm)
+      updated: '2021-06-04'
+    inline_dated_change:
+      document: 订单API
+      note: 'Order state 60 (订单处理中 / order processing) is annotated "since 2026-04-20"
+        and requires the Ximalaya technical team to enable it per partner — the single
+        dated, versioned behaviour change found anywhere in the reference.'
+
+gaps:
+- No deprecation policy, no sunset dates, no Deprecation/Sunset headers.
+- No status page and no incident communication channel.
+- No changelog or release notes.
+- No published SLA.

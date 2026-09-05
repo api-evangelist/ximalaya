@@ -1,0 +1,158 @@
+generated: '2026-09-04'
+method: searched
+source: https://open.ximalaya.com/doc/detailApi?categoryId=6&articleId=67 (参数组成),
+  https://open.ximalaya.com/doc/detailApi?categoryId=6&articleId=69 (签名算法), https://open.ximalaya.com/doc/detailApi?categoryId=7&articleId=75
+  (OAuth2 标准登录授权指南)
+note: >-
+  Ximalaya publishes no OpenAPI/Swagger document, so this profile was read from the
+  Open Platform documentation rather than derived from securitySchemes. The docs are
+  served by a JS-rendered SPA; the content was read from the portal's own anonymous
+  documentation backend at https://open.ximalaya.com/api-docs/document?id=<id>.
+
+summary: >-
+  Every Ximalaya Open Platform call is signed. A public app_key identifies the
+  application and a per-request `sig` signature (HMAC-SHA1 over a canonicalized,
+  base64-encoded parameter string, then MD5 of the raw HMAC bytes) authenticates it.
+  APIs that read user-private data additionally require an OAuth 2.0 access_token.
+  There is no bearer-only mode and no unsigned public tier.
+
+schemes:
+- id: app_key_signature
+  type: apiKey
+  in: query_or_form
+  name: app_key
+  applies_to: all APIs except user-private data APIs
+  description: >-
+    Application public key issued when an app is created in the Open Platform
+    management console. Sent as the `app_key` request parameter alongside the
+    computed `sig`.
+  companion_secret: app_secret
+  server_side_extra_key: serverAuthStaticKey
+  server_side_note: >-
+    Applications approved for server-side (API) access receive an additional
+    serverAuthStaticKey. For those apps the HMAC key becomes app_secret
+    concatenated with serverAuthenticateStaticKey. Server-side access also
+    requires an IP allowlist configured in the console.
+  docs: https://open.ximalaya.com/doc/detailApi?categoryId=7&articleId=70
+
+- id: oauth2
+  type: oauth2
+  applies_to: user-private data APIs (profile, subscription, cloud play history)
+  description: >-
+    OAuth 2.0 authorization for accessing a Ximalaya user's own data. The
+    access_token is passed as a request parameter (not an Authorization header)
+    and is signed together with the other parameters.
+  token_transport: request parameter `access_token`
+  flows:
+  - grant_type: authorization_code
+    authorization_endpoint: https://api.ximalaya.com/oauth2/v2/authorize
+    token_endpoint: https://api.ximalaya.com/oauth2/v2/access_token
+    parameters: [client_id, client_secret, redirect_uri, code, device_id, grant_type]
+  - grant_type: client_credentials
+    token_endpoint: https://api.ximalaya.com/oauth2/v2/access_token
+    note: used for app-level (non-user) access; the API access guide's own curl example
+      uses this grant.
+  - grant_type: refresh_token
+    token_endpoint: https://api.ximalaya.com/oauth2/refresh_token
+    parameters: [client_id, client_secret, refresh_token, device_id, grant_type]
+  management_endpoints:
+  - path: /oauth2/get_token_info
+    purpose: introspect an access_token
+  - path: /oauth2/revoke_token
+    purpose: revoke an access_token
+  - path: /oauth2/revoke_refresh_token
+    purpose: revoke a refresh_token
+  - path: /oauth2/exchange_access_token
+    purpose: exchange a third-party account token for a Ximalaya access_token
+  docs: https://open.ximalaya.com/doc/detailApi?categoryId=9&articleId=5
+
+- id: third_party_account_binding
+  type: oauth2
+  applies_to: partners federating their own user accounts into Ximalaya
+  description: >-
+    Partners may bind their own account system to Ximalaya. The partner exposes a
+    token-validation URL that Ximalaya calls (/ximalaya/validate_third_token), and
+    third_uid + third_token are exchanged for a Ximalaya access_token.
+  docs: https://open.ximalaya.com/doc/detailApi?categoryId=9&articleId=60
+
+signature:
+  algorithm: HMAC-SHA1 + MD5
+  parameter: sig
+  case: lowercase
+  steps:
+  - Sort every request parameter except `sig` by parameter name in lexicographic order,
+    using raw (un-URL-encoded) values.
+  - Join the sorted pairs as key1=val1&key2=val2&...
+  - Base64-encode that string using the UTF-8 charset -> base64EncodedStr.
+  - 'Build the HMAC key: app_secret for client (access_token) style access; app_secret
+    concatenated with serverAuthenticateStaticKey for approved server-side API access.'
+  - Compute HMAC-SHA1(base64EncodedStr, key) and keep the RAW BYTE ARRAY (not its hex
+    string) — the docs call this out explicitly as the most common integration error.
+  - MD5 the raw HMAC bytes to produce the 32-character lowercase `sig`.
+  inbound_callbacks_use_a_different_algorithm: true
+  inbound_callback_note: >-
+    The four provider-to-partner push callbacks (/ximalaya/open_push,
+    /ximalaya/notice_pay_album_update, /ximalaya/order_status_notify,
+    /ximalaya/upload_notify) use a separate "partner-implemented" signature algorithm
+    that the partner must verify on receipt.
+  docs: https://open.ximalaya.com/doc/detailApi?categoryId=6&articleId=69
+
+common_parameters:
+- name: app_key
+  required: true
+  description: Open Platform application public key.
+- name: client_os_type
+  required: true
+  description: '1=iOS, 2=Android, 3=Web, 4=API/Linux (pure server-side), 5=ECOS, 6=mini-program,
+    7=smart speaker, 8=H5 sub-site. Payment APIs accept only 1 or 2.'
+- name: nonce
+  required: true
+  description: Random string, regenerated per request.
+- name: timestamp
+  required: true
+  description: Unix milliseconds. Must be within 1 hour of server time; within 5 minutes
+    for distribution APIs.
+- name: device_id
+  required: true
+  description: Device identifier (OAID preferred on Android, IDFA on iOS). Optional on
+    a few pure server-side endpoints such as /incr/tracks and /incr/albums.
+- name: device_id_type
+  required: true
+  description: One of OAID, OAID_MD5, Android_ID, Android_ID_MD5, IDFA, IDFA_MD5, UUID.
+- name: server_api_version
+  required: true
+  description: 'API version string; currently 1.0.0. Missing value returns error 108.'
+- name: sig
+  required: true
+  description: Computed signature over all other parameters.
+- name: access_token
+  required: conditional
+  description: OAuth2 token; required only on user-private data APIs.
+- name: pack_id
+  required: conditional
+  description: Client package name (Android) or Bundle ID (iOS); required on user-private
+    data APIs when client_os_type is 1 or 2.
+
+replay_protection:
+  mechanism: nonce + timestamp
+  behavior: reject
+  error_code: 225
+  error_string: ximalaya.duplicate invoke with same nonce and timestamp
+  note: >-
+    Reusing the same nonce and timestamp for the same app_key is REJECTED (error 225,
+    and error 301 on the server-side authentication path). This is anti-replay, not
+    idempotency: a retried request must be re-signed with a fresh nonce, so a client
+    cannot safely replay an identical request to recover from a timeout.
+
+transport:
+  https_required: true
+  methods: [GET, POST]
+  post_content_type: application/x-www-form-urlencoded; charset=UTF-8
+  response_content_type: application/json;charset=UTF-8
+
+gaps:
+- No OpenAPI/Swagger document is published, so securitySchemes cannot be machine-read.
+- No /.well-known/oauth-authorization-server or /.well-known/openid-configuration is
+  served on any Ximalaya host (probed 2026-09-04, all 404 or SPA shell).
+- Credentials are issued only after a commercial onboarding review; there is no
+  self-service key issuance.

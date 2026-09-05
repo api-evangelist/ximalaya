@@ -1,0 +1,162 @@
+generated: '2026-09-04'
+method: derived
+status: candidate
+source: >-
+  Derived from the operations Ximalaya documents at
+  https://open.ximalaya.com/doc/api (read via the portal documentation backend
+  https://open.ximalaya.com/api-docs). Searched 2026-09-04 for a first-party hosted or
+  stdio MCP server — none exists.
+
+note: >-
+  NOBODY SHIPS AN MCP SERVER FOR XIMALAYA. This file is a CANDIDATE tool surface
+  derived from the provider's published REST operations, not a server that exists. It
+  is wired into apis.yml as type X-MCPServerCandidate, deliberately NOT as MCPServer,
+  because an MCPServer pointer asserts the provider operates an agent-callable
+  endpoint and Ximalaya does not.
+
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: unknown
+  verified: derived
+
+search_evidence:
+- No MCP server is published by Ximalaya on any host, in the XimalayaCloud GitHub org
+  (7 public repos, all infrastructure OSS), or on npm/PyPI.
+- No /.well-known/agent-card.json or /.well-known/agent.json on any of 7 Ximalaya hosts
+  (probed 2026-09-04) — so no agent card pointing at an MCP endpoint either.
+- No MCP endpoint URL is named anywhere in the Open Platform documentation.
+- The only "ximalaya" MCP-adjacent package on npm is dsh-ximalaya, a third-party
+  DeepSeek-harness plugin, not a Ximalaya product.
+
+derivation_caveat: >-
+  This candidate is derived from DOCUMENTATION, not from an OpenAPI document, because
+  Ximalaya publishes no machine-readable spec. Each candidate tool below therefore
+  carries the documented endpoint path but NOT a real inputSchema — parameters are
+  documented in HTML tables and were not transcribed into schemas here, because doing
+  so would manufacture a contract Ximalaya has not published. Any implementer must
+  read the parameter tables from the docs.
+
+candidate_tools:
+- name: search_albums
+  path: /v2/search/albums
+  host: api.ximalaya.com
+  category: search
+  description: Search the album catalog with filters and sorting.
+- name: search_tracks
+  path: /v2/search/tracks
+  host: api.ximalaya.com
+  category: search
+  description: Search individual audio tracks.
+- name: get_hot_search_words
+  path: /search/hot_words
+  host: api.ximalaya.com
+  category: search
+- name: get_search_suggestions
+  path: /search/suggest_words
+  host: api.ximalaya.com
+  category: search
+- name: list_categories
+  path: /categories/list
+  host: api.ximalaya.com
+  category: taxonomy
+- name: list_albums
+  path: /v2/albums/list
+  host: api.ximalaya.com
+  category: content
+- name: get_albums_batch
+  path: /albums/get_batch
+  host: api.ximalaya.com
+  category: content
+- name: browse_album_tracks
+  path: /albums/browse
+  host: api.ximalaya.com
+  category: content
+- name: get_tracks_batch
+  path: /tracks/get_batch
+  host: api.ximalaya.com
+  category: content
+- name: get_track
+  path: /tracks/get_single
+  host: api.ximalaya.com
+  category: content
+- name: get_free_play_info
+  path: /openapi_play_url/tracks/batch_get_play_info
+  host: api.ximalaya.com
+  category: playback
+  consequence: read
+- name: guess_you_like_albums
+  path: /v2/albums/guess_like
+  host: api.ximalaya.com
+  category: recommendation
+- name: get_related_albums
+  path: /v2/albums/relative_albums
+  host: api.ximalaya.com
+  category: recommendation
+- name: list_radios
+  path: /live/radios
+  host: api.ximalaya.com
+  category: broadcast
+- name: get_radio_schedule
+  path: /live/schedules
+  host: api.ximalaya.com
+  category: broadcast
+- name: get_now_playing_program
+  path: /live/get_playing_program
+  host: api.ximalaya.com
+  category: broadcast
+- name: get_user_profile
+  path: /profile/user_info
+  host: api.ximalaya.com
+  category: user
+  auth: oauth2 (profile:read)
+- name: list_user_subscriptions
+  path: /v2/subscribe/get_albums_by_uid
+  host: api.ximalaya.com
+  category: user
+  auth: oauth2 (subscribe:read)
+- name: set_subscription
+  path: /subscribe/add_or_delete
+  host: api.ximalaya.com
+  category: user
+  auth: oauth2 (subscribe:write)
+  consequence: write
+  reversible: true
+- name: get_play_history
+  path: /play_history/get_by_uid
+  host: api.ximalaya.com
+  category: user
+  auth: oauth2 (play_history:read)
+- name: get_paid_album_price
+  path: /open_pay/get_price_info
+  host: mpay.ximalaya.com
+  category: commerce
+  consequence: read
+- name: check_album_purchased
+  path: /open_pay/album_bought_status
+  host: mpay.ximalaya.com
+  category: commerce
+  consequence: read
+
+excluded_from_candidate_surface:
+- reason: Irreversible money movement with no documented reversal operation and no
+    idempotency key. Should not be exposed to an agent without a human-in-the-loop gate.
+  paths:
+  - /open_pay/v2/prepare_order
+  - /omp-payment-open-api/v2/distribute
+- reason: Mandatory analytics reporting, not an agent capability.
+  paths:
+  - play/browse/impression data callbacks
+
+blockers_for_a_real_server:
+- Every call requires an HMAC-SHA1 + MD5 signature computed over sorted parameters,
+  with a fresh nonce and timestamp per request. An MCP server would have to hold the
+  app_secret and sign server-side.
+- Credentials are issued only after commercial onboarding; there is no self-service key,
+  so a public MCP server could not be usable by an arbitrary agent operator.
+- Duplicate nonce/timestamp is rejected (error 225), so naive retry logic in an agent
+  loop will fail rather than replay safely.
+- No OpenAPI means no machine-generated inputSchemas; every tool schema would be
+  hand-written from HTML tables.

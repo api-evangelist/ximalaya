@@ -64,5 +64,17 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Ximalaya is a company surfaced via the API Evangelist harvest backlog (source: secondary-market) and added to the network as a stub for full-pipeline profiling.
-- https://www.hiive.com/securities/ximalaya-stock
+Ximalaya (喜马拉雅) is China's largest online audio platform — audiobooks, podcasts,
+radio dramas, children's content, courses, news and live broadcast radio. Its developer surface is the
+Ximalaya Open Platform (open.ximalaya.com), a partner-oriented program for embedding Ximalaya audio into
+mobile apps, smart speakers, in-car head units, H5 sub-sites and WeChat mini-programs.
+
+The platform documents roughly 90 HTTP+JSON operations across two hosts — api.ximalaya.com for content,
+search, recommendation, OAuth 2.0 accounts, user data and analytics callbacks, and mpay.ximalaya.com for
+paid-content distribution, pricing and orders — but publishes no OpenAPI, AsyncAPI, GraphQL or MCP
+contract. Everything in this repository was read from Ximalaya's own public documentation and from live
+probes; nothing was generated to stand in for a contract the company does not publish.
+
+- Developer portal: https://open.ximalaya.com/
+- API reference: https://open.ximalaya.com/doc/api
+- Website: https://www.ximalaya.com/

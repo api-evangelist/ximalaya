@@ -1,0 +1,117 @@
+generated: '2026-09-04'
+method: searched
+source: >-
+  https://open.ximalaya.com/doc/detailApi?categoryId=6&articleId=66 (测试账号),
+  https://open.ximalaya.com/doc/detailApi?categoryId=7&articleId=70 (API接入指南),
+  https://open.ximalaya.com/doc/tool
+note: >-
+  Ximalaya has NO separate sandbox environment. There is no test host, no test-mode
+  key prefix and no isolated data set — the published "test accounts" are real
+  applications pointed at PRODUCTION (线上环境), and the test content is real
+  production catalog. This is the defining characteristic of testing on this platform
+  and it is what makes the paid-content flows genuinely risky to exercise.
+
+sandbox_environment:
+  separate_host: false
+  separate_key_prefix: false
+  test_mode_flag: false
+  environment: production only
+  provider_quote: 以下测试账号为线上的联调测试账号，适用于线上环境的联调测试
+  provider_quote_translation: >-
+    "The following test accounts are online integration-test accounts, suitable for
+    integration testing in the production environment."
+  internal_environments_note: >-
+    Ximalaya's own JS bundle references open.test.ximalaya.com and
+    open.uat.ximalaya.com (plus matching passport/upload hosts). These are internal
+    staging environments and are not offered to partners anywhere in the
+    documentation; they are recorded here as an observation, not as an available
+    surface.
+
+credentials:
+  published: true
+  published_location: https://open.ximalaya.com/doc/detailApi?categoryId=6&articleId=66
+  count: 2
+  redaction_note: >-
+    Ximalaya publishes two complete shared test credential sets (app_key, appSecret and
+    serverAuthStaticKey) openly in its documentation. The values are deliberately NOT
+    copied into this repository — they are live production credentials shared across
+    every developer reading the page, and mirroring them here would both trip secret
+    scanning and widen their exposure. Follow the source URL above to read them.
+  sets:
+  - id: test-account-1
+    purpose: Free content integration, and paid distribution in "partner collects
+      payment" (合作伙伴收款) mode.
+    fields_published: [app_key, appSecret, serverAuthStaticKey]
+  - id: test-account-2
+    purpose: Paid distribution in the shared/generic checkout (通用收银台) mode.
+    fields_published: [app_key, appSecret, serverAuthStaticKey]
+  shared_credential_risk: >-
+    Because these keys are shared and unscoped-per-developer, the per-application rate
+    limit (5000/min, 280000/hour) is consumed by everyone testing at once, and the
+    per-UID risk-control trigger (error 110) can be tripped by other people's traffic.
+    The JS SDK docs separately note that the hosted jssdk_sig helper is restricted to
+    the test app_key and rate-limited, and must be replaced with a partner-hosted
+    sig_url before launch.
+
+test_fixtures:
+  free_albums:
+    ids: [53042877, 243213, 14315671]
+    note: Real production albums. Any track within them may be used for testing.
+  purchasable_full_albums:
+    ids: [6255313, 13536168]
+    note: Whole-album purchase testing, against real production catalog and real money.
+  purchasable_tracks:
+    parent_album_id: 5203860
+    constraint: Batch track purchases must all belong to the same album.
+    preview_seconds_note: >-
+      Preview durations below are published as a reference only; the docs say the
+      duration returned by the API is authoritative.
+    tracks:
+    - {track_id: 21077146, preview_seconds: 82}
+    - {track_id: 21077147, preview_seconds: 90}
+    - {track_id: 22910748, preview_seconds: 90}
+    - {track_id: 35983700, preview_seconds: 90}
+    - {track_id: 35983701, preview_seconds: 90}
+    - {track_id: 47427014, preview_seconds: 90}
+    - {track_id: 47427015, preview_seconds: 90}
+    - {track_id: 47427016, preview_seconds: 90}
+    - {track_id: 47427017, preview_seconds: 90}
+    - {track_id: 47427018, preview_seconds: 90}
+
+refunds_in_testing:
+  supported: false
+  provider_quote: 一般不支持退款…如有测试退款需求请提前与商务沟通对接，否则不允退款
+  provider_quote_translation: >-
+    "Refunds are generally not supported… if you need a test refund, arrange it with
+    your business contact in advance, otherwise refunds will not be permitted."
+  guidance_published: >-
+    Ximalaya advises testing with the lowest-priced products available and asking the
+    operations team to provision cheap test products. Because purchases are real, an
+    unplanned test purchase is not automatically recoverable.
+
+tooling:
+- name: Server-side API debugging tool (服务端API调试工具)
+  url: https://open.ximalaya.com/doc/tool
+  description: >-
+    Hosted console that computes the sig signature and issues live calls against
+    production. The only interactive way to exercise the signature algorithm without
+    implementing it first.
+- name: JS SDK hosted signing helper
+  path: /openapi-collector-app/jssdk_sig
+  host: https://api.ximalaya.com
+  description: >-
+    Ximalaya-hosted signature endpoint for browser integrations. Restricted to the
+    published test app_key and rate-limited; partners must stand up their own sig_url
+    before going live.
+
+test_clocks: false
+fixture_triggers: false
+mock_server: false
+
+gaps:
+- No isolated sandbox environment or test data set.
+- No test-mode credentials of the partner's own; the published ones are shared.
+- No way to simulate order states (cancelled/refunded/failed/processing) without
+  transacting real money.
+- No time simulation or event-trigger tooling for the four inbound callbacks, so a
+  partner cannot rehearse order_status_notify handling on demand.

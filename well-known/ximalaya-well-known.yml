@@ -1,0 +1,125 @@
+generated: '2026-09-04'
+method: probed
+source: live HTTP probes, 2026-09-04
+note: >-
+  Ximalaya serves NO /.well-known documents on any host. 56 probes across 7 hosts
+  returned no real document. No WellKnown, SecurityTxt or AgentCard pointer is emitted
+  in apis.yml as a result — this file records a measured absence, not a presence.
+  IMPORTANT READING NOTE: open.ximalaya.com is a single-page application whose server
+  answers HTTP 200 with the same 3,561-byte HTML shell for EVERY path, including every
+  /.well-known/* path and every /openapi.json-style path. Those 200s are soft-404s and
+  are recorded below as misses, with the shell noted. api.ximalaya.com and
+  apihera.ximalaya.com answer 400 with the platform's own JSON error envelope
+  (ximalaya.common.request_param_check_failed) rather than 404, because every path on
+  those hosts is routed into the signed-API handler.
+
+document_count: 0
+real_documents_found: 0
+
+hosts:
+- host: ximalaya.com
+  documents:
+  - {path: /.well-known/security.txt, status: 404, file: null}
+  - {path: /.well-known/openid-configuration, status: 404, file: null}
+  - {path: /.well-known/oauth-authorization-server, status: 404, file: null}
+  - {path: /.well-known/oauth-protected-resource, status: 404, file: null}
+  - {path: /.well-known/api-catalog, status: 404, file: null}
+  - {path: /.well-known/ai-plugin.json, status: 404, file: null}
+  - {path: /.well-known/agent-card.json, status: 404, file: null}
+  - {path: /.well-known/agent.json, status: 404, file: null}
+- host: www.ximalaya.com
+  documents:
+  - {path: /.well-known/security.txt, status: 404, file: null}
+  - {path: /.well-known/openid-configuration, status: 404, file: null}
+  - {path: /.well-known/oauth-authorization-server, status: 404, file: null}
+  - {path: /.well-known/oauth-protected-resource, status: 404, file: null}
+  - {path: /.well-known/api-catalog, status: 404, file: null}
+  - {path: /.well-known/ai-plugin.json, status: 404, file: null}
+  - {path: /.well-known/agent-card.json, status: 404, file: null}
+  - {path: /.well-known/agent.json, status: 404, file: null}
+  - {path: /llms.txt, status: 404, file: null}
+  - {path: /robots.txt, status: 200, file: null, note: 'Served, but a plain crawler
+      policy only — no AI/agent directives, no Sitemap line, no llms.txt reference.'}
+- host: api.ximalaya.com
+  note: Primary API host. Non-API paths return HTTP 400 with the platform JSON error
+    envelope rather than 404.
+  documents:
+  - {path: /.well-known/security.txt, status: 404, file: null}
+  - {path: /.well-known/openid-configuration, status: 400, file: null}
+  - {path: /.well-known/oauth-authorization-server, status: 400, file: null}
+  - {path: /.well-known/oauth-protected-resource, status: 400, file: null}
+  - {path: /.well-known/api-catalog, status: 400, file: null}
+  - {path: /.well-known/ai-plugin.json, status: 400, file: null}
+  - {path: /.well-known/agent-card.json, status: 400, file: null}
+  - {path: /openapi.json, status: 400, file: null}
+  - {path: /swagger.json, status: 400, file: null}
+  - {path: /v2/api-docs, status: 400, file: null}
+- host: apihera.ximalaya.com
+  note: Documented failover API host. Behaves identically to api.ximalaya.com.
+  documents:
+  - {path: /.well-known/security.txt, status: 404, file: null}
+  - {path: /.well-known/openid-configuration, status: 400, file: null}
+  - {path: /.well-known/oauth-authorization-server, status: 400, file: null}
+  - {path: /.well-known/oauth-protected-resource, status: 400, file: null}
+  - {path: /.well-known/api-catalog, status: 400, file: null}
+  - {path: /.well-known/ai-plugin.json, status: 400, file: null}
+  - {path: /.well-known/agent-card.json, status: 400, file: null}
+  - {path: /.well-known/agent.json, status: 400, file: null}
+  - {path: /openapi.json, status: 400, file: null}
+- host: mpay.ximalaya.com
+  note: Payment/distribution API host.
+  documents:
+  - {path: /.well-known/security.txt, status: 404, file: null}
+  - {path: /.well-known/openid-configuration, status: 404, file: null}
+  - {path: /.well-known/oauth-authorization-server, status: 404, file: null}
+  - {path: /.well-known/oauth-protected-resource, status: 404, file: null}
+  - {path: /.well-known/api-catalog, status: 404, file: null}
+  - {path: /.well-known/ai-plugin.json, status: 404, file: null}
+  - {path: /.well-known/agent-card.json, status: 404, file: null}
+  - {path: /.well-known/agent.json, status: 404, file: null}
+  - {path: /openapi.json, status: 404, file: null}
+  - {path: /swagger.json, status: 404, file: null}
+- host: open.ximalaya.com
+  note: >-
+    Developer portal. SPA catch-all — every path below returned HTTP 200 with an
+    identical 3,561-byte HTML shell, not a document. All recorded as misses.
+  documents:
+  - {path: /.well-known/security.txt, status: 404, file: null}
+  - {path: /.well-known/openid-configuration, status: 200, file: null, note: SPA HTML
+      shell, not a document}
+  - {path: /.well-known/oauth-authorization-server, status: 200, file: null, note: SPA
+      HTML shell, not a document}
+  - {path: /.well-known/oauth-protected-resource, status: 200, file: null, note: SPA
+      HTML shell, not a document}
+  - {path: /.well-known/api-catalog, status: 200, file: null, note: SPA HTML shell, not
+      a document}
+  - {path: /.well-known/ai-plugin.json, status: 200, file: null, note: SPA HTML shell,
+      not a document}
+  - {path: /.well-known/agent-card.json, status: 200, file: null, note: SPA HTML shell,
+      not a document}
+  - {path: /.well-known/agent.json, status: 200, file: null, note: SPA HTML shell, not
+      a document}
+  - {path: /openapi.json, status: 200, file: null, note: SPA HTML shell, not a spec}
+  - {path: /swagger.json, status: 200, file: null, note: SPA HTML shell, not a spec}
+  - {path: /llms.txt, status: 404, file: null}
+  - {path: /robots.txt, status: 404, file: null}
+- host: passport.ximalaya.com
+  note: Identity host referenced by the portal's own JS bundle.
+  documents:
+  - {path: /.well-known/security.txt, status: 404, file: null}
+  - {path: /.well-known/openid-configuration, status: 404, file: null}
+  - {path: /.well-known/oauth-authorization-server, status: 404, file: null}
+  - {path: /.well-known/oauth-protected-resource, status: 404, file: null}
+  - {path: /.well-known/api-catalog, status: 404, file: null}
+  - {path: /.well-known/ai-plugin.json, status: 404, file: null}
+  - {path: /.well-known/agent-card.json, status: 404, file: null}
+  - {path: /.well-known/agent.json, status: 404, file: null}
+
+findings:
+- No security.txt on any host, so there is no machine-discoverable vulnerability
+  reporting address.
+- No OAuth discovery document, despite Ximalaya operating a real OAuth 2.0
+  authorization server at api.ximalaya.com/oauth2/v2/authorize. Endpoints, grants and
+  scopes are documented only in prose.
+- No api-catalog, no ai-plugin.json, no agent card.
+- No llms.txt on either the marketing or the developer host.

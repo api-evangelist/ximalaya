@@ -1,0 +1,67 @@
+generated: '2026-09-04'
+method: searched
+source: https://open.ximalaya.com/doc/detailQuickStart?categoryId=19&articleId=44 (Step1
+  平台入驻), https://open.ximalaya.com/doc/detailQuickStart?categoryId=14&articleId=61 (分销商入驻),
+  https://open.ximalaya.com/doc/detailQuickStart?categoryId=21&articleId=43 (业务说明)
+plan_count: 0
+pricing_model: commercial-negotiation
+self_service: false
+
+note: >-
+  Ximalaya publishes NO priced developer plans. There is no pricing page, no tier
+  table, no free-tier quota and no self-service checkout anywhere on the Open
+  Platform. Access is granted through a commercial onboarding process: a partner
+  registers (入驻), agrees a scope of access with a Ximalaya business contact (商务),
+  and is then issued an app_key/app_secret whose available capabilities are limited
+  to what that agreement covers. The developer console explicitly states that the
+  selectable integration methods are bounded by the range agreed with Ximalaya
+  business during onboarding.
+
+commercial_models_documented:
+- id: free-content-integration
+  name: 免费内容接入 (Free content integration)
+  description: >-
+    Partner embeds Ximalaya's free on-demand audio and broadcast radio catalog. No
+    price is published for the partner; the documented exchange is that the partner
+    must implement the three mandatory analytics callbacks (play, browse, impression)
+    and pass launch review.
+  docs: https://open.ximalaya.com/doc/detailQuickStart?categoryId=14&articleId=66
+- id: paid-content-distribution
+  name: 付费内容分销 (Paid content distribution)
+  description: >-
+    Partner resells Ximalaya paid albums/tracks. Revenue share and settlement terms
+    are set in the bilateral distribution agreement, not published. Two documented
+    collection modes exist — partner-collects (合作伙伴收款) and Ximalaya's shared
+    checkout (通用收银台) — which change who takes payment, but neither carries a
+    published rate.
+  docs: https://open.ximalaya.com/doc/detailQuickStart?categoryId=14&articleId=60
+- id: membership-distribution
+  name: 会员分销 (Membership distribution)
+  description: Partner resells Ximalaya membership subscriptions. Terms unpublished.
+  docs: https://open.ximalaya.com/doc/detailQuickStart?categoryId=14&articleId=62
+- id: distributor-onboarding
+  name: 分销商入驻 (Distributor onboarding)
+  description: Qualification path a partner must complete before any paid distribution
+    is enabled.
+  docs: https://open.ximalaya.com/doc/detailQuickStart?categoryId=14&articleId=61
+
+runtime_price_discovery:
+  available: true
+  note: >-
+    Although Ximalaya publishes no partner-facing plan pricing, END-USER content
+    prices ARE machine-readable at runtime for onboarded distributors, via
+    /open_pay/get_price_info and /omp-payment-open-api/get_gradient_activity_price_info
+    on mpay.ximalaya.com, returning the PriceDetail and Gradient_Activity models. This
+    is content pricing, not API pricing.
+  operations:
+  - /open_pay/get_price_info
+  - /omp-payment-open-api/get_gradient_activity_price_info
+  - /omp-payment-open-api/get_distributed_product_infos
+
+gaps:
+- No published API pricing, plan tiers, or free-tier allowance.
+- No self-service signup that yields working credentials; app creation exists at
+  https://open.ximalaya.com/developer/app but capability grants require business
+  approval.
+- Rate limits (5000/min, 280000/hour) are published as flat per-application values and
+  are not tied to any plan, so there is no visible paid path to a higher quota.

@@ -1,0 +1,169 @@
+generated: '2026-09-04'
+method: searched
+source: https://open.ximalaya.com/doc/detailApi?categoryId=6&articleId=38 (错误码), read via the portal documentation
+  backend https://open.ximalaya.com/api-docs/document?id=38
+note: Ximalaya publishes no OpenAPI document, so this catalog could not be derived from 4xx/5xx responses.
+  It is the provider's own published error registry, captured verbatim (Chinese descriptions kept as published;
+  English glosses added by API Evangelist are marked). The document was last updated by Ximalaya on 2026-03-29.
+format: proprietary
+rfc9457: false
+envelope:
+  content_type: application/json;charset=UTF-8
+  fields:
+  - name: error_no
+    type: int
+    description: Numeric error number, grouped 1xx-7xx by class.
+  - name: error_code
+    type: string
+    description: Dotted string error code, e.g. ximalaya.common.signature_check_failed.
+  - name: error_desc
+    type: string
+    description: Human-readable error description.
+  - name: service
+    type: string
+    required: false
+    description: Optional. Names which backend service failed.
+  observed_example:
+    probed_url: https://api.ximalaya.com/oauth2/v2/access_token
+    http_status: 400
+    probed: '2026-09-04'
+    body: '{"error_code":"ximalaya.common.request_param_check_failed", ...}'
+    note: Confirms the envelope is live and that HTTP 400 carries the error_code field.
+groups:
+- series: 1xx
+  meaning: common — parameter, signature, permission, quota and application-state errors
+- series: 2xx
+  meaning: oauth2 / authentication — authorization, token and device errors
+- series: 3xx
+  meaning: server-side authentication — signed server-to-server access
+- series: 4xx
+  meaning: client parameter validation
+- series: 5xx
+  meaning: server — internal, third-party and unknown server errors
+- series: 6xx
+  meaning: pay — paid content entitlement and copyright errors
+- series: 7xx
+  meaning: encryption — playback URL decryption key errors
+error_count: 38
+errors:
+- error_no: 100
+  error_code: ximalaya.common.request_param_check_failed
+  description_zh: 参数校验失败错误，包括参数缺失、参数格式错误等情况
+- error_no: 101
+  error_code: ximalaya.common.signature_check_failed
+  description_zh: 签名验证失败
+- error_no: 102
+  error_code: ximalaya.common.permission_validate_failed
+  description_zh: 权限验证失败
+- error_no: 103
+  error_code: ximalaya.common.app_validate_failed
+  description_zh: app_key无效或者应用处于不可用状态或者应用的client_os_type、pack_id等参数不匹配
+- error_no: 104
+  error_code: ximalaya.common.request_out_of_limit
+  description_zh: 调用请求次数超出限额。每个应用都有调用请求频率限制，如果超出限制就会返回104错误码。目前调用频率限制为单应用一分钟5000次，一小时280000次。（所有接口都包含在里面）
+- error_no: 105
+  error_code: ximalaya.common.http_method_invalid
+  description_zh: HTTP谓词使用错误，比如有的API接口明确要求用POST，而你却用了GET
+- error_no: 108
+  error_code: ximalaya.common.server_api_version_required
+  description_zh: 缺少参数server_api_version
+- error_no: 110
+  error_code: ximalaya.common.risk_of_brush_limit
+  description_zh: 调用请求次数超出限额被风控，同一个喜马UID，同时满足，一天内收听超过20个专辑，并且请求声音次数达8000次以上就会被风控
+- error_no: 111
+  error_code: ximalaya.common.not_allowed_to_be_distributable
+  description_zh: app没有入驻导致不可分销
+- error_no: 200
+  error_code: ximalaya.oauth2.redirect_uri_invalid
+  description_zh: OAuth2回调地址错误
+- error_no: 201
+  error_code: ximalaya.oauth2.response_type_invalid
+  description_zh: response_type值非法，目前response_type值只能为"code"
+- error_no: 202
+  error_code: ximalaya.oauth2.scope_grant_denied
+  description_zh: scope授权被拒绝，因为scope非法或越界
+- error_no: 203
+  error_code: ximalaya.oauth2.authorization_code_invalid
+  description_zh: 授权码错误或者已过期
+- error_no: 204
+  error_code: ximalaya.oauth2.authorization_grant_denied
+  description_zh: 用户或授权服务器拒绝授予数据访问权限，比如当用户撤回了应用的OAuth2访问权限后再去调获取访问令牌接口会出现这个错误
+- error_no: 205
+  error_code: ximalaya.oauth2.grant_type_invalid
+  description_zh: grant_type值无效或者不支持
+- error_no: 206
+  error_code: ximalaya.oauth2.access_token_invalid_or_expired
+  description_zh: access_token无效或者已过期
+- error_no: 207
+  error_code: ximalaya.oauth2.user_login_failed
+  description_zh: 用户登陆失败，用户名或密码错误
+- error_no: 208
+  error_code: ximalaya.authenticate.oauth2_authenticate_failed
+  description_zh: OAuth2签名验证失败
+- error_no: 209
+  error_code: ximalaya.authenticate.oauth2_device_id_invalid
+  description_zh: device_id无效
+- error_no: 210
+  error_code: ximalaya.common.app_validate_failed
+  description_zh: app_key无效或者应用处于不可用状态
+- error_no: 211
+  error_code: ximalaya.common.uid_is_missing_or_invalid
+  description_zh: uid缺失或无效
+- error_no: 212
+  error_code: ximalaya.oauth2.refresh_token_invalid_or_expired
+  description_zh: 刷新令牌refresh_token无效或过期
+- error_no: 213
+  error_code: ximalaya.oauth2.third_uid_invalid
+  description_zh: third_uid参数无效
+- error_no: 214
+  error_code: ximalaya.oauth2.third_token_invalid
+  description_zh: third_token无效或已过期
+- error_no: 215
+  error_code: ximalaya.oauth2.third_token_validate_uri_invalid
+  description_zh: third_token校验url无效
+- error_no: 216
+  error_code: ximalaya.oauth2.third_token_validate_failed
+  description_zh: third_token校验失败
+- error_no: 217
+  error_code: ximalaya.oauth2.qrcode_expired
+  description_zh: 二维码已过期，请重新获取二维码
+- error_no: 219
+  error_code: ximalaya.oauth2.qrcode_login_disable
+  description_zh: 不允许应用通过二维码登录接入
+- error_no: 225
+  error_code: ximalaya.duplicate invoke with same nonce and timestamp
+  description_zh: 重复调用，不允许使用相同的nonce 和 timestamp时间戳进行重复调用
+- error_no: 301
+  error_code: ximalaya.oauth2.server_authenticate_failed
+  description_zh: 服务端身份认证失败，包括签名计算错误，nonce参数缺失，timestamp与当前服务器时间不一致，同一appkey使用同一timestamp、nonce重复请求，服务端请求时未配置IP白名单。具体参数请查看
+    target="_blank">API接入参数组成
+- error_no: 400
+  error_code: client_os_type should be 1 or 2
+  description_zh: 公共参数client_os_type需填写对应的客户端类型（1-iOS系统，2-Android系统）
+- error_no: 500
+  error_code: ximalaya.system.internal_service_error
+  description_zh: 调用开放平台内部服务发生错误
+- error_no: 501
+  error_code: ximalaya.system.thirdparty_service_error
+  description_zh: 调用第三方服务发生错误
+- error_no: 502
+  error_code: ximalaya.system.unknown_server_error
+  description_zh: 未知服务器错误
+- error_no: 611
+  error_code: ximalaya.pay.track_is_not_paid_track
+  description_zh: 已下架且用户未购买
+- error_no: 612
+  error_code: ximalaya.pay.paid_track_is_not_buyerkey
+  description_zh: 付费声音没有购买
+- error_no: 643
+  error_code: ximalaya.pay.albun_track_cannot_output
+  description_zh: 专辑无版权不可输出
+- error_no: 702
+  error_code: secret for encryption is not exists or expired
+  description_zh: Chinese Quote", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino
+    Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;">SDK解密播放密钥已失效或不存在，SDK检测到此错误码会重新生成密钥
+gaps:
+- Error responses are not RFC 9457 application/problem+json.
+- The published registry does not state the HTTP status paired with each error_no; only error_no/error_code/description
+  are documented.
+- No remediation field is published per error.

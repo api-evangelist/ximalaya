@@ -1,0 +1,116 @@
+generated: '2026-09-04'
+method: searched
+source: >-
+  npm registry (registry.npmjs.org), https://www.npmjs.com/package/@xmly-fem/web-jssdk,
+  https://open.ximalaya.com/doc/detailApi?categoryId=7&articleId=73 (JS SDK接入指南),
+  https://open.ximalaya.com/doc/detailApi?categoryId=7&articleId=103 (小程序接入指南),
+  https://api.github.com/orgs/XimalayaCloud
+note: >-
+  Registries searched 2026-09-04: npm, PyPI, Maven Central, NuGet, pkg.go.dev,
+  RubyGems, Packagist, crates.io. Ximalaya publishes exactly ONE first-party client
+  library to a public package registry. Its iOS and Android SDKs are referenced
+  throughout the documentation but are distributed only to onboarded partners through
+  the console — they have no public registry coordinate, so their versions cannot be
+  read and are recorded as null rather than guessed.
+
+package_count: 1
+official_package_count: 1
+
+packages:
+- name: '@xmly-fem/web-jssdk'
+  registry: npm
+  url: https://www.npmjs.com/package/@xmly-fem/web-jssdk
+  official: true
+  official_evidence: >-
+    Linked as the canonical install path from Ximalaya's own JS SDK integration guide
+    (open.ximalaya.com JS SDK接入指南), and the package description is the Chinese
+    string "喜马拉雅开放平台 · H5 网页应用接入 JSSDK" (Ximalaya Open Platform · H5 web
+    application integration JSSDK).
+  language: JavaScript
+  install: npm install @xmly-fem/web-jssdk
+  alternate_install: yarn add @xmly-fem/web-jssdk
+  version: 1.5.1
+  published: '2023-06-08'
+  first_published: '2019-08-16'
+  version_count: 19
+  exports: [config, XMLY, XMplayer]
+  global_when_cdn_loaded: window.xmsdk
+  repository: null
+  homepage: null
+  docs: https://openact.ximalaya.com/web-jssdk/doc/
+  currency_note: >-
+    ABANDONMENT SIGNAL. The latest release is 1.5.1 from 2023-06-08, and before that
+    the package sat unchanged since 2021-10-20. Ximalaya's API reference, by contrast,
+    was still being edited in 2026 — the Order API document was updated 2026-04-20 and
+    the error-code registry 2026-03-29. The only first-party SDK is therefore roughly
+    three years behind the API it wraps, including behaviour added since (order state
+    60, introduced 2026-04-20).
+
+- name: Ximalaya WeChat Mini-Program Plugin
+  registry: wechat-miniprogram-plugin
+  url: https://mp.weixin.qq.com/wxopen/plugindevdoc?appid=wxc6a13dda5815c529
+  appid: wxc6a13dda5815c529
+  official: true
+  official_evidence: Distributed and documented by Ximalaya as the mini-program integration
+    path in 小程序接入指南.
+  language: JavaScript (WeChat mini-program)
+  version: null
+  published: null
+  currency_note: >-
+    WeChat's mini-program plugin marketplace is not a package registry with a public
+    metadata endpoint — version and release date are visible only inside the WeChat
+    developer console to accounts that have applied for the plugin. Checked, nothing
+    to record.
+
+- name: Ximalaya iOS SDK
+  registry: null
+  official: true
+  language: Objective-C/Swift
+  version: null
+  published: null
+  distribution: partner console download
+  currency_note: >-
+    No CocoaPods, Swift Package Manager or public download URL is published. The SDK is
+    referenced in the integration guides and issued to onboarded partners through the
+    Open Platform console, so no version metadata is publicly readable. Recorded as
+    null deliberately — checked, nothing published.
+
+- name: Ximalaya Android SDK
+  registry: null
+  official: true
+  language: Java/Kotlin
+  version: null
+  published: null
+  distribution: partner console download
+  currency_note: >-
+    No Maven Central or JitPack coordinate exists. Same distribution model as the iOS
+    SDK. Checked, nothing published.
+
+community_packages_note: >-
+  A search of npm for "ximalaya" returns only third-party work (downloaders, a
+  DeepSeek-harness plugin, an unofficial @types package for the mini-program plugin).
+  None is first-party and none is recorded above as official.
+
+github_organization:
+  url: https://github.com/XimalayaCloud
+  verified_first_party: true
+  verification: >-
+    Org display name "ximalaya", description "Ximalaya.com", website
+    https://www.ximalaya.com/, location SH. Confirmed via api.github.com/orgs/XimalayaCloud
+    on 2026-09-04.
+  public_repos: 7
+  contains_api_sdks: false
+  note: >-
+    The org publishes internal infrastructure open source — xcache (a C++ cache system,
+    201 stars, last pushed 2026-09-02), award (a React SSR framework),
+    flutter_page_tracker, aggregate-framework and a patched redis — not Open Platform
+    API client libraries. It is a genuine first-party engineering presence but it is
+    not where an API consumer finds a client.
+
+gaps:
+- No first-party SDK for any server-side language (Python, Java, Go, PHP, Ruby, C#,
+  Node.js). Every server integration must implement the HMAC-SHA1 + MD5 signature by
+  hand, which is the platform's most error-prone requirement and the one its own docs
+  warn about most loudly.
+- The one published SDK is browser-only and last released 2023-06-08.
+- No package is linked to a public source repository.

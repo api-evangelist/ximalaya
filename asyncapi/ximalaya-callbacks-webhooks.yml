@@ -1,0 +1,97 @@
+generated: '2026-09-04'
+method: searched
+source: >-
+  https://open.ximalaya.com/doc/detailApi?categoryId=6&articleId=69 (签名算法 — enumerates
+  the push interfaces), https://open.ximalaya.com/doc/detailApi?categoryId=10&articleId=34
+  (点播数据同步API), https://open.ximalaya.com/doc/detailApi?categoryId=15&articleId=31
+  (订单API), https://open.ximalaya.com/doc/detailApi?categoryId=14&articleId=36 (播放数据回传API)
+asyncapi_spec_published: false
+note: >-
+  Ximalaya publishes NO AsyncAPI document and no event-streaming surface. It does
+  publish a real, documented bidirectional event surface built on plain signed HTTP
+  callbacks, captured here as a webhook catalog. Two directions exist and they are
+  easy to confuse, so both are recorded: INBOUND (Ximalaya pushes to a partner
+  endpoint) and OUTBOUND (the partner is REQUIRED to push analytics to Ximalaya).
+
+inbound_webhooks:
+  direction: Ximalaya -> partner
+  description: >-
+    Ximalaya POSTs to a partner-hosted URL registered during onboarding. The partner
+    must verify the signature using the separate "partner-implemented" signature
+    algorithm — NOT the standard request-signing algorithm used for outbound API calls.
+  signature_algorithm: 合作方实现接口签名生成算法 (partner-implemented signature algorithm)
+  signature_docs: https://open.ximalaya.com/doc/detailApi?categoryId=6&articleId=69
+  count: 4
+  events:
+  - path: /ximalaya/open_push
+    name: Album/track shelf-state push
+    description: >-
+      Real-time push of album and track on-shelf / off-shelf (上架/下架) state changes.
+      The partner is expected to act on this to add or withdraw content from its own
+      catalog. This is the primary content-compliance signal on the platform.
+    docs: https://open.ximalaya.com/doc/detailApi?categoryId=10&articleId=34
+  - path: /ximalaya/notice_pay_album_update
+    name: Paid album update notice
+    description: Real-time notification that a paid album's information has changed.
+    docs: https://open.ximalaya.com/doc/detailApi?categoryId=10&articleId=34
+  - path: /ximalaya/order_status_notify
+    name: Order status notification
+    description: >-
+      Order result notification. Carries terminal and non-terminal order states
+      including 3 (cancelled), 4 (refunded), 5 (failed) and, since 2026-04-20,
+      60 (processing). Refunds are pushed over this callback, which is the only way a
+      partner learns a reversal occurred.
+    docs: https://open.ximalaya.com/doc/detailApi?categoryId=15&articleId=31
+  - path: /ximalaya/upload_notify
+    name: Audio upload result notification
+    description: Notification of the result of a partner audio upload.
+    docs: https://open.ximalaya.com/doc/detailApi?categoryId=5&articleId=89
+  - path: /ximalaya/validate_third_token
+    name: Third-party token validation callback
+    description: >-
+      Partner-hosted endpoint Ximalaya calls to validate a third-party account token
+      during federated login. Listed separately from the four signed push interfaces
+      because it is a synchronous validation call rather than an event push.
+    docs: https://open.ximalaya.com/doc/detailApi?categoryId=9&articleId=60
+    kind: synchronous-callback
+
+outbound_analytics_callbacks:
+  direction: partner -> Ximalaya
+  mandatory: true
+  description: >-
+    These are not optional webhooks — they are a launch precondition. An API-only
+    partner must implement all three and demonstrate successful data flow before the
+    application passes Ximalaya's launch review. SDK partners get play reporting
+    handled by the SDK player but must still invoke browse and impression reporting
+    manually.
+  docs: https://open.ximalaya.com/doc/detailApi?categoryId=7&articleId=107
+  count: 4
+  events:
+  - name: Play data callback (播放数据回传)
+    docs: https://open.ximalaya.com/doc/detailApi?categoryId=14&articleId=36
+    required_for: all partners (auto-handled by the SDK player for SDK integrations)
+  - name: Album browse data callback (专辑浏览数据回传)
+    docs: https://open.ximalaya.com/doc/detailApi?categoryId=14&articleId=83
+    required_for: all partners (manual call even on SDK integrations)
+  - name: Album impression data callback (专辑曝光数据回传)
+    docs: https://open.ximalaya.com/doc/detailApi?categoryId=14&articleId=106
+    required_for: all partners (manual call even on SDK integrations)
+  - name: Broadcast data callback (广播数据回传)
+    docs: https://open.ximalaya.com/doc/detailApi?categoryId=14&articleId=112
+    required_for: partners integrating live broadcast radio
+
+delivery_semantics:
+  retry_policy_published: false
+  ordering_guarantee_published: false
+  deduplication_key_published: false
+  note: >-
+    Ximalaya does not publish retry behaviour, delivery guarantees, ordering, or a
+    dedupe key for inbound pushes. A partner cannot tell from the documentation whether
+    a push is at-least-once or at-most-once, which matters most on
+    order_status_notify.
+
+gaps:
+- No AsyncAPI or CloudEvents document.
+- No event schema registry; payload shapes are documented only as HTML tables.
+- No published retry, ordering or replay semantics.
+- No partner-visible delivery log or redelivery endpoint.
