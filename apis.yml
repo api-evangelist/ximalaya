@@ -1,14 +1,13 @@
 aid: ximalaya
 name: Ximalaya
-description: 'Ximalaya (喜马拉雅) is China''s largest online audio and podcast platform,
-  distributing audiobooks, radio dramas, children''s content, courses, news and live
-  broadcast radio. Its developer surface is the Ximalaya Open Platform (open.ximalaya.com),
-  a partner-oriented program that lets mobile apps, smart speakers, in-car head units,
-  H5 sub-sites and WeChat mini-programs embed Ximalaya audio. The platform publishes
-  a documented HTTP+JSON API across two hosts — api.ximalaya.com for content, search,
-  recommendation, OAuth2 accounts, user data and analytics callbacks, and mpay.ximalaya.com
-  for paid-content distribution, pricing and orders — secured by an app_key plus an
-  HMAC-SHA1/MD5 request signature, with OAuth 2.0 access tokens for user-private data.'
+description: Ximalaya (喜马拉雅) is China's largest online audio and podcast platform, distributing audiobooks,
+  radio dramas, children's content, courses, news and live broadcast radio. Its developer surface is the
+  Ximalaya Open Platform (open.ximalaya.com), a partner-oriented program that lets mobile apps, smart
+  speakers, in-car head units, H5 sub-sites and WeChat mini-programs embed Ximalaya audio. The platform
+  publishes a documented HTTP+JSON API across two hosts — api.ximalaya.com for content, search, recommendation,
+  OAuth2 accounts, user data and analytics callbacks, and mpay.ximalaya.com for paid-content distribution,
+  pricing and orders — secured by an app_key plus an HMAC-SHA1/MD5 request signature, with OAuth 2.0 access
+  tokens for user-private data.
 image: https://s1.xmcdn.com/yx/open-website/last/build/favicon.ico
 url: https://raw.githubusercontent.com/api-evangelist/ximalaya/refs/heads/main/apis.yml
 x-type: company
@@ -27,20 +26,25 @@ tags:
 - China
 - Entertainment
 apis:
-- aid: ximalaya-open-platform-api
+- aid: ximalaya:ximalaya-open-platform-api
   name: Ximalaya Open Platform API
-  description: 'The core Ximalaya Open Platform HTTP+JSON API on api.ximalaya.com:
-    free on-demand content (albums, tracks, categories, tags), paid on-demand content
-    metadata, content search with hot/suggest words, recommendation, content-operations
-    surfaces (columns, banners, ranks, dimensions), broadcast radio, OAuth 2.0 account
-    authorization, user profile / subscription / cloud play-history, and the mandatory
-    play, browse and impression analytics callbacks. Requests carry common parameters
-    (app_key, client_os_type, nonce, timestamp, device_id, device_id_type, server_api_version)
-    plus a computed sig signature.'
+  description: 'The core Ximalaya Open Platform HTTP+JSON API on api.ximalaya.com: free on-demand content
+    (albums, tracks, categories, tags), paid on-demand content metadata, content search with hot/suggest
+    words, recommendation, content-operations surfaces (columns, banners, ranks, dimensions), broadcast
+    radio, OAuth 2.0 account authorization, user profile / subscription / cloud play-history, and the
+    mandatory play, browse and impression analytics callbacks. Requests carry common parameters (app_key,
+    client_os_type, nonce, timestamp, device_id, device_id_type, server_api_version) plus a computed sig
+    signature.'
   humanURL: https://open.ximalaya.com/doc/api
   image: https://s1.xmcdn.com/yx/open-website/last/build/favicon.ico
   baseURL: https://api.ximalaya.com
   tags:
+  - Audio
+  - Content
+  - Search
+  - Authentication
+  - Radio
+  tags_raw:
   - Audio
   - Content
   - Search
@@ -63,20 +67,23 @@ apis:
     url: rate-limits/ximalaya-rate-limits.yml
   - type: Webhooks
     url: asyncapi/ximalaya-callbacks-webhooks.yml
-- aid: ximalaya-open-pay-distribution-api
+- aid: ximalaya:ximalaya-open-pay-distribution-api
   name: Ximalaya Paid Content & Distribution API
-  description: 'The paid-content and distribution HTTP+JSON API on mpay.ximalaya.com:
-    product/price lookup (get_price_info, get_gradient_activity_price_info), album
-    and track distribution (distribute, v2/distribute, get_distributed_product_infos),
-    order preparation and order detail (prepare_order, get_order_detail), purchase-state
-    checks (album_bought_status, track_bought_status, get_bought), and authorized
-    playback URL issuance for paid audio and video (get_play_info, batch_get_play_info,
-    get_video_play_info). Order results are delivered back to the partner over a signed
-    order_status_notify callback.'
+  description: 'The paid-content and distribution HTTP+JSON API on mpay.ximalaya.com: product/price lookup
+    (get_price_info, get_gradient_activity_price_info), album and track distribution (distribute, v2/distribute,
+    get_distributed_product_infos), order preparation and order detail (prepare_order, get_order_detail),
+    purchase-state checks (album_bought_status, track_bought_status, get_bought), and authorized playback
+    URL issuance for paid audio and video (get_play_info, batch_get_play_info, get_video_play_info). Order
+    results are delivered back to the partner over a signed order_status_notify callback.'
   humanURL: https://open.ximalaya.com/doc/detailApi?categoryId=15&articleId=31
   image: https://s1.xmcdn.com/yx/open-website/last/build/favicon.ico
   baseURL: https://mpay.ximalaya.com
   tags:
+  - Payments
+  - Distribution
+  - Order
+  - Commerce
+  tags_raw:
   - Payments
   - Distribution
   - Orders
